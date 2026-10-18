@@ -1,0 +1,24 @@
+.card {
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 16px;
+  max-width: 360px;
+  background: white;
+}
+
+.link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.title {
+  margin: 0 0 8px;
+  font-size: 20px;
+}
+
+.meta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 0.9rem;
+}

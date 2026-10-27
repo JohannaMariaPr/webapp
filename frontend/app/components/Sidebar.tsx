@@ -10,7 +10,7 @@ const navigation = [
   { label: "Explore", to: "/allhikes", icon: "explore" as IconName },
   { label: "Map", to: "/map", icon: "map" as IconName },
   { label: "Saved", to: "/saved", icon: "saved" as IconName },
-  { label: "Account", to: "/profile", icon: "account" as IconName },
+  { label: "Account", to: "/404", icon: "account" as IconName },
 ];
 
 function NavigationIcon({ name }: { name: IconName }) {

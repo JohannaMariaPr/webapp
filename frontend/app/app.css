@@ -37,6 +37,139 @@ body {
   min-width: 0;
 }
 
+.not-found-page {
+  display: flex;
+  min-height: 100%;
+  align-items: flex-start;
+  justify-content: center;
+  background: #f7f0e9;
+}
+
+.not-found-content {
+  position: relative;
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  align-items: flex-start;
+  justify-content: center;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.not-found-copy {
+  position: relative;
+  z-index: 2;
+  width: min(94%, 860px);
+  padding-top: clamp(72px, 12vh, 132px);
+  color: #704238;
+  text-align: center;
+}
+
+.not-found-copy h1 {
+  max-width: 740px;
+  margin: 0 auto;
+  font-size: clamp(27px, 3.2vw, 40px);
+  font-weight: 700;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.not-found-lead {
+  max-width: 900px;
+  margin: 14px 0 0;
+  font-size: clamp(20px, 2.3vw, 29px);
+  line-height: 1.2;
+}
+
+.not-found-description {
+  max-width: 900px;
+  margin: 12px 0 0;
+  font-size: clamp(15px, 1.6vw, 19px);
+  line-height: 1.25;
+}
+
+.not-found-home-link {
+  display: inline-flex;
+  min-width: 152px;
+  min-height: 43px;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  margin-top: 37px;
+  padding: 9px 18px;
+  border: 1px solid rgba(112, 66, 56, 0.2);
+  border-radius: 999px;
+  background: #fffaf5;
+  box-shadow: 0 2px 4px rgba(62, 42, 34, 0.16);
+  color: #704238;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: background-color 160ms ease, transform 160ms ease;
+}
+
+.not-found-home-link:hover {
+  background: #ffffff;
+  transform: translateY(-1px);
+}
+
+.not-found-landscape {
+  position: absolute;
+  z-index: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+}
+
+.not-found-home-link:focus-visible {
+  outline: none;
+  outline: 3px solid #879fd0;
+  outline-offset: 3px;
+}
+
+@media (max-width: 760px) {
+  .not-found-content {
+    min-height: 100vh;
+  }
+
+  .not-found-copy {
+    width: min(92%, 460px);
+    padding-top: clamp(72px, 15vh, 118px);
+  }
+
+  .not-found-copy h1 {
+    max-width: 320px;
+    font-size: clamp(18px, 6vw, 31px);
+  }
+
+  .not-found-lead {
+    margin-top: 13px;
+    font-size: clamp(19px, 5vw, 23px);
+  }
+
+  .not-found-description {
+    margin-top: 11px;
+    font-size: clamp(14px, 3.8vw, 17px);
+  }
+
+  .not-found-home-link {
+    margin-top: 36px;
+  }
+
+  .not-found-landscape {
+    width: auto;
+    min-width: 100%;
+    height: 49%;
+    max-width: none;
+    object-fit: cover;
+    object-position: left bottom;
+  }
+
+}
+
 .sidebar {
   position: sticky;
   top: 0;

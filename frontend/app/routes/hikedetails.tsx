@@ -1,5 +1,6 @@
 import { useParams } from "react-router";
 import type { Route } from "./+types/home";
+import Slider from "../components/Slider";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -11,9 +12,14 @@ export function meta({}: Route.MetaArgs) {
 export default function HikeDetail() {
   const { id } = useParams<{ id: string }>();
   return (
+
     <div>
       <h1>Hike Detail: {id}</h1>
       <p>test Welcome to the Hike Detail page!</p>
+      <Slider
+        beforeImage="/Sliderimages/before.webp"
+        afterImage="/Sliderimages/after.png"
+      />
     </div>
   );
 }

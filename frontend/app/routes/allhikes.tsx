@@ -56,7 +56,7 @@ export default function AllHikes() {
     
     <main className="p-6">
       <h1 className="mb-4 text-3xl font-bold">All Hikes</h1>
-      <p>Welcome to the All Hikes page!</p>
+      <p>Welcome to the Test Hikes page!</p>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {hikes.map((hike) => (
           <HikeCard key={hike.id} hike={hike} />

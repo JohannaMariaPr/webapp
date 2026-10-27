@@ -10,7 +10,7 @@ export default function Home() {
       </h1>
 
       <p className="mt-4 text-gray-700">
-        Explore hiking trails and discover new adventures.
+THIS IS A TEST
       </p>
 
       <nav>

@@ -10,7 +10,7 @@ export function meta({}: Route.MetaArgs) {
 export default function Profile() {
   return (
     <div>
-      <h1>Profile TEST</h1>
+      <h1>Profile TEST1</h1>
       <p>Welcome to the Profile page!</p>
     </div>
   );

@@ -13,7 +13,7 @@ export default function HikeDetail() {
   return (
     <div>
       <h1>Hike Detail: {id}</h1>
-      <p>Welcome to the Hike Detail page!</p>
+      <p>test Welcome to the Hike Detail page!</p>
     </div>
   );
 }

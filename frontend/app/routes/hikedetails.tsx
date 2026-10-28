@@ -143,7 +143,7 @@ export default function HikeDetail({ loaderData }: Route.ComponentProps) {
       <img
       src="/wonders/wonders%20picture.png"
       alt="Wonders along the way"
-      className="mx-auto my-6 w-full max-w-3xl rounded-lg shadow-lg"
+      className="mx-auto my-6 w-full max-w-xs rounded-lg shadow-lg"
     />
       <HikeReview reviews={loaderData.reviews} hikeId={id} />
       <ArtistPart paintings={loaderData.paintings} />

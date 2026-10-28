@@ -6,7 +6,7 @@ export default function HikeReview({ reviews, hikeId }) {
        <img
       src="/Mappart/Itemr.png"
          alt="Review"
-         className="mx-auto my-6 w-full max-w-3xl rounded-lg shadow-lg"
+         className="mx-auto my-6 w-full max-w-xs rounded-lg shadow-lg"
       />
     <p className="w-full max-w-3xl mx-auto text-right text-[#673C33] underline">
       Show all

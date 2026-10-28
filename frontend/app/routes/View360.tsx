@@ -87,7 +87,7 @@ export default function View360() {
         </div>
 
         <Link
-          to="/map"
+          to="/activehike"
           className="rounded-full bg-[#f3eee8] px-5 py-2 text-sm font-bold uppercase text-[#6b3f2e] shadow-md"
         >
           Back to map

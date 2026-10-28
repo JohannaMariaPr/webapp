@@ -50,7 +50,7 @@ export default function MobileFilters({
           rounded-full
           border
           border-[#673C33]
-          bg-[#F7F0E9]
+          bg-[#FFFDF9]
           text-[#673C33]
         "
         aria-label="Open filters"
@@ -66,7 +66,7 @@ export default function MobileFilters({
             left-0
             right-0
             bottom-0
-            top-[130px]
+            top-32.5
             z-50
             flex
             flex-col
@@ -200,12 +200,12 @@ export default function MobileFilters({
           </div>
 
           {/* View results */}
-          <div className="mt-auto flex justify-center pb-[28px] pt-6">
+          <div className="mt-auto flex justify-center pb-7 pt-6">
             <button
               type="button"
               onClick={() => setIsOpen(false)}
               className="
-                min-w-[150px]
+                min-w-37.5
                 rounded-full
                 bg-[#FFF8F3]
                 px-7
@@ -216,7 +216,7 @@ export default function MobileFilters({
                 shadow-sm
               "
             >
-              View Results
+              VIEW RESULTS
             </button>
           </div>
         </div>

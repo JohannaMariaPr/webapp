@@ -6,6 +6,8 @@ import HikeDescription from "../components/hikedescription";
 import SearchBar from "../components/SearchBar";
 import MapPart from "../components/mappart";
 import HikeReview from "../components/hikereview";
+import ArtistPart from "../components/artistpart";
+
 
 interface HikeRow {
   title: string;
@@ -16,6 +18,17 @@ interface HikeRow {
   difficulty: string;
   description_short: string;
   description_long: string;
+  paintings?: PaintingRow[];
+}
+
+interface PaintingRow {
+  title?: string;
+  artist?: string;
+  location?: string;
+  description?: string;
+  artist_description?: string;
+  image?: string;
+  picture?: string;
 }
 
 interface ReviewRow {
@@ -42,7 +55,7 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   }
 
   const response = await fetch(
-    `${supabaseUrl}/rest/v1/hikes?id=eq.${encodeURIComponent(params.id)}&select=title,location,distance_km,duration_min,duration_max,difficulty,description_short,description_long`,
+    `${supabaseUrl}/rest/v1/hikes?id=eq.${encodeURIComponent(params.id)}&select=title,location,distance_km,duration_min,duration_max,difficulty,description_short,description_long,paintings(*)`,
     {
       headers: {
         apikey: supabaseKey,
@@ -77,17 +90,24 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   }
 
   const reviews = (await reviewsResponse.json()) as ReviewRow[];
+  const rating = reviews.length
+    ? reviews.reduce((total, review) => {
+        return total + Number.parseInt(review["Star rating"], 10);
+      }, 0) / reviews.length
+    : 0;
 
   return {
+    id: params.id,
     name: row.title,
     location: row.location,
     distanceKm: row.distance_km,
     duration: `${row.duration_min}-${row.duration_max} min`,
     difficulty: row.difficulty,
-    rating: 0,
+    rating,
     headline: row.description_short,
     description: row.description_long,
     reviews,
+    paintings: row.paintings ?? [],
   };
 }
 
@@ -96,7 +116,7 @@ export default function HikeDetail({ loaderData }: Route.ComponentProps) {
   const [searchValue, setSearchValue] = useState("");
 
   return (
-    <div className="font-sans min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen bg-background p-8 font-body">
       <header className="flex justify-center p-6">
         <SearchBar value={searchValue} onChange={setSearchValue} />
       </header>
@@ -107,23 +127,17 @@ export default function HikeDetail({ loaderData }: Route.ComponentProps) {
       />
       <HikeDescription hike={loaderData} />
       <div className="flex flex-wrap justify-center gap-4 p-6">
-        <button
+        <Link
+          to="/allhikes"
           className="rounded-full  bg-white px-5 py-3 font-semibold text-[#673C33] shadow-sm transition hover:bg-[#f3eee8]"
         >
           Back to Hikes
-        </button>
+        </Link>
         <button
           className="rounded-full  bg-[#D14C18] px-5 py-3 font-semibold text-[white] shadow-sm transition hover:brightness-95"
         >
           Start Hike
         </button>
-        {/* Passes the hike id along so the reviews page shows (and saves) reviews for this hike */}
-        <Link
-          to={`/reviews?hike=${id}`}
-          className="rounded-full bg-white px-5 py-3 font-semibold text-[#673C33] shadow-sm transition hover:bg-[#f3eee8]"
-        >
-          Rate Hike
-        </Link>
       </div>
        <MapPart />
       <img
@@ -131,13 +145,15 @@ export default function HikeDetail({ loaderData }: Route.ComponentProps) {
       alt="Wonders along the way"
       className="mx-auto my-6 w-full max-w-3xl rounded-lg shadow-lg"
     />
-      <HikeReview reviews={loaderData.reviews} />
+      <HikeReview reviews={loaderData.reviews} hikeId={id} />
+      <ArtistPart paintings={loaderData.paintings} />
      <div className="flex justify-center gap-4 p-6">
-        <button
+        <Link
+          to="/allhikes"
           className="rounded-full  bg-white px-5 py-3 font-semibold text-[#673C33] shadow-sm transition hover:bg-[#f3eee8]"
         >
           Back to Hikes
-        </button>
+        </Link>
         <button
           className="rounded-full  bg-[#D14C18] px-5 py-3 font-semibold text-[white] shadow-sm transition hover:brightness-95"
         >

@@ -4,6 +4,7 @@ import SearchBar from "../components/SearchBar";
 import DesktopFilters from "../components/filters/DesktopFilters";
 import MobileFilters from "../components/filters/MobileFilters";
 import ActiveFilterTags from "../components/filters/ActiveFilterTags";
+import MobileViewSwitch from "~/components/MobileViewSwitch";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_KEY;
@@ -169,7 +170,7 @@ export default function AllHikes() {
   return (
   <main className="p-6">
     <h1 className="mb-2 text-3xl font-bold">
-      Explore All Hikes
+      EXPLORE ALL HIKES
     </h1>
 
     <p className="mb-4">
@@ -251,6 +252,10 @@ export default function AllHikes() {
         No hikes found.
       </p>
     )}
+
+
+    <MobileViewSwitch target="map" />
+    
   </main>
   );
 }

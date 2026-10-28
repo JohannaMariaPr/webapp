@@ -6,11 +6,10 @@ export default function Home() {
     
     <main className="font-sans min-h-screen bg-gray-50 p-8">
       <h1 className="text-3xl font-bold text-blue-600">
-        Welcome to the Hiking App
-      </h1>
+TEST      </h1>
 
       <p className="mt-4 text-gray-700">
-        Explore hiking trails and discover new adventures.
+THIS IS A TEST
       </p>
 
       <nav>

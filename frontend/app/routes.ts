@@ -4,6 +4,7 @@ export default [
     index("routes/home.tsx"),
   route("allhikes", "routes/allhikes.tsx"),
   route("map", "routes/map.tsx"),
+  route("saved", "routes/saved.tsx"),
   route("profile", "routes/profile.tsx"),
   route("activehike", "routes/activehike.tsx"),
 route("featureview", "routes/featureview.tsx"),

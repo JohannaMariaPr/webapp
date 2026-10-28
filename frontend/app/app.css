@@ -427,7 +427,7 @@
   .sidebar-menu-button {
     position: fixed;
     top: 18px;
-    left: 18px;
+    right: 18px;
     z-index: 10;
     display: flex;
     width: 44px;
@@ -458,5 +458,49 @@
     display: block;
     border: 0;
     background: rgba(44, 29, 24, 0.38);
+  }
+}
+
+/* Web (761px and up): sidebar 25% smaller, 430px -> 322px, everything inside scaled x0.75.
+   .app-content is flex: 1, so the page next to the sidebar still fills the rest of the screen. */
+@media (min-width: 761px) {
+  .sidebar {
+    width: min(100%, 322px);
+    flex: 0 0 322px;
+  }
+
+  .sidebar-header {
+    padding: 39px 22px 12px;
+  }
+
+  .sidebar-logo {
+    width: 107px;
+    margin-bottom: 10px;
+  }
+
+  .sidebar-header h1 {
+    font-size: 20px;
+  }
+
+  .sidebar-header p {
+    max-width: 262px;
+    font-size: 12px;
+  }
+
+  .sidebar-nav {
+    gap: 22px;
+    padding: 28px 22px;
+  }
+
+  .sidebar-link {
+    gap: 9px;
+    padding: 2px 3px;
+    font-size: 12px;
+  }
+
+  .sidebar-link svg {
+    width: 16px;
+    height: 16px;
+    flex: 0 0 16px;
   }
 }

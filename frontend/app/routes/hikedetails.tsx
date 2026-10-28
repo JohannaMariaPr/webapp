@@ -69,6 +69,35 @@ export default function HikeDetail({ loaderData }: Route.ComponentProps) {
         afterImage="/Sliderimages/after.png"
       />
       <HikeDescription hike={loaderData} />
+      <div className="flex justify-center gap-4 p-6">
+        <button
+          className="rounded-full  bg-white px-5 py-3 font-semibold text-[#673C33] shadow-sm transition hover:bg-[#f3eee8]"
+        >
+          Back to Hikes
+        </button>
+        <button
+          className="rounded-full  bg-[#D14C18] px-5 py-3 font-semibold text-[white] shadow-sm transition hover:brightness-95"
+        >
+          Start Hike
+        </button>
+      </div>
+      <img
+      src="/wonders/wonders%20picture.png"
+      alt="Wonders along the way"
+      className="mx-auto my-6 w-full max-w-3xl rounded-lg shadow-lg"
+    />
+     <div className="flex justify-center gap-4 p-6">
+        <button
+          className="rounded-full  bg-white px-5 py-3 font-semibold text-[#673C33] shadow-sm transition hover:bg-[#f3eee8]"
+        >
+          Back to Hikes
+        </button>
+        <button
+          className="rounded-full  bg-[#D14C18] px-5 py-3 font-semibold text-[white] shadow-sm transition hover:brightness-95"
+        >
+          Start Hike
+        </button>
+      </div>
     </div>
   );
 }

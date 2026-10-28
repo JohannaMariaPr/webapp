@@ -21,8 +21,6 @@ interface MobileFiltersProps {
   setDifficulty: (value: string | null) => void;
 }
 
-type OpenSection = "distance" | "duration" | "difficulty" | null;
-
 export default function MobileFilters({
   distance,
   setDistance,
@@ -32,14 +30,10 @@ export default function MobileFilters({
   setDifficulty,
 }: MobileFiltersProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [openSection, setOpenSection] =
-    useState<OpenSection>("distance");
 
-  function toggleSection(section: OpenSection) {
-    setOpenSection((current) =>
-      current === section ? null : section
-    );
-  }
+  const [distanceOpen, setDistanceOpen] = useState(true);
+  const [durationOpen, setDurationOpen] = useState(true);
+  const [difficultyOpen, setDifficultyOpen] = useState(true);
 
   return (
     <div className="md:hidden">
@@ -56,7 +50,7 @@ export default function MobileFilters({
           rounded-full
           border
           border-[#673C33]
-          bg-[#F6EFE9]
+          bg-[#F7F0E9]
           text-[#673C33]
         "
         aria-label="Open filters"
@@ -64,22 +58,29 @@ export default function MobileFilters({
         <SlidersHorizontal size={20} strokeWidth={1.8} />
       </button>
 
-      {/* Filter overlay */}
+      {/* Mobile filter overlay */}
       {isOpen && (
         <div
           className="
             fixed
-            inset-0
+            left-0
+            right-0
+            bottom-0
+            top-[130px]
             z-50
+            flex
+            flex-col
             overflow-y-auto
-            bg-[#F6EFE9]
+            rounded-t-3xl
+            bg-[#F7F0E9]
             px-5
-            py-6
+            pt-6
+            shadow-[0_-4px_20px_rgba(62,42,34,0.12)]
           "
         >
           {/* Header */}
-          <div className="mb-8 flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-[#673C33]">
+          <div className="mb-5 flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-[#673C33]">
               Filters
             </h2>
 
@@ -89,15 +90,15 @@ export default function MobileFilters({
               className="text-[#673C33]"
               aria-label="Close filters"
             >
-              <X size={26} strokeWidth={1.8} />
+              <X size={22} strokeWidth={1.8} />
             </button>
           </div>
 
           {/* Distance */}
-          <div className="border-b border-[#704238]/20 py-4">
+          <div className="border-b border-[#704238]/15 py-4">
             <button
               type="button"
-              onClick={() => toggleSection("distance")}
+              onClick={() => setDistanceOpen((open) => !open)}
               className="
                 flex
                 w-full
@@ -107,17 +108,19 @@ export default function MobileFilters({
                 text-[#673C33]
               "
             >
-              <span className="font-medium">Distance</span>
+              <span className="font-medium">
+                Distance
+              </span>
 
-              {openSection === "distance" ? (
-                <ChevronUp size={20} strokeWidth={1.8} />
+              {distanceOpen ? (
+                <ChevronUp size={18} strokeWidth={1.8} />
               ) : (
-                <ChevronDown size={20} strokeWidth={1.8} />
+                <ChevronDown size={18} strokeWidth={1.8} />
               )}
             </button>
 
-            {openSection === "distance" && (
-              <div className="mt-4">
+            {distanceOpen && (
+              <div className="mt-3">
                 <DistanceFilter
                   value={distance}
                   onChange={setDistance}
@@ -127,10 +130,10 @@ export default function MobileFilters({
           </div>
 
           {/* Duration */}
-          <div className="border-b border-[#704238]/20 py-4">
+          <div className="border-b border-[#704238]/15 py-4">
             <button
               type="button"
-              onClick={() => toggleSection("duration")}
+              onClick={() => setDurationOpen((open) => !open)}
               className="
                 flex
                 w-full
@@ -140,17 +143,19 @@ export default function MobileFilters({
                 text-[#673C33]
               "
             >
-              <span className="font-medium">Duration</span>
+              <span className="font-medium">
+                Duration
+              </span>
 
-              {openSection === "duration" ? (
-                <ChevronUp size={20} strokeWidth={1.8} />
+              {durationOpen ? (
+                <ChevronUp size={18} strokeWidth={1.8} />
               ) : (
-                <ChevronDown size={20} strokeWidth={1.8} />
+                <ChevronDown size={18} strokeWidth={1.8} />
               )}
             </button>
 
-            {openSection === "duration" && (
-              <div className="mt-4">
+            {durationOpen && (
+              <div className="mt-3">
                 <DurationFilter
                   value={duration}
                   onChange={setDuration}
@@ -160,10 +165,10 @@ export default function MobileFilters({
           </div>
 
           {/* Difficulty */}
-          <div className="border-b border-[#704238]/20 py-4">
+          <div className="border-b border-[#704238]/15 py-4">
             <button
               type="button"
-              onClick={() => toggleSection("difficulty")}
+              onClick={() => setDifficultyOpen((open) => !open)}
               className="
                 flex
                 w-full
@@ -173,17 +178,19 @@ export default function MobileFilters({
                 text-[#673C33]
               "
             >
-              <span className="font-medium">Difficulty</span>
+              <span className="font-medium">
+                Difficulty
+              </span>
 
-              {openSection === "difficulty" ? (
-                <ChevronUp size={20} strokeWidth={1.8} />
+              {difficultyOpen ? (
+                <ChevronUp size={18} strokeWidth={1.8} />
               ) : (
-                <ChevronDown size={20} strokeWidth={1.8} />
+                <ChevronDown size={18} strokeWidth={1.8} />
               )}
             </button>
 
-            {openSection === "difficulty" && (
-              <div className="mt-4">
+            {difficultyOpen && (
+              <div className="mt-3">
                 <DifficultyFilter
                   value={difficulty}
                   onChange={setDifficulty}
@@ -192,23 +199,26 @@ export default function MobileFilters({
             )}
           </div>
 
-          {/* View results button */}
-          <button
-            type="button"
-            onClick={() => setIsOpen(false)}
-            className="
-              mt-10
-              w-full
-              rounded-full
-              bg-[#673C33]
-              px-5
-              py-3
-              font-semibold
-              text-white
-            "
-          >
-            View Results
-          </button>
+          {/* View results */}
+          <div className="mt-auto flex justify-center pb-[28px] pt-6">
+            <button
+              type="button"
+              onClick={() => setIsOpen(false)}
+              className="
+                min-w-[150px]
+                rounded-full
+                bg-[#FFF8F3]
+                px-7
+                py-2.5
+                text-sm
+                font-semibold
+                text-[#673C33]
+                shadow-sm
+              "
+            >
+              View Results
+            </button>
+          </div>
         </div>
       )}
     </div>

@@ -37,7 +37,7 @@ export default function DurationFilter({
               ${
                 isSelected
                   ? "bg-[#7C9DD2] text-white border-[#7C9DD2]"
-                  : "bg-transparent text-[#7C9DD2] border-[#7C9DD2]"
+                  : "bg-transparent text-[#673C33] border-[#7C9DD2]"
               }
             `}
           >

@@ -65,7 +65,7 @@ export default function HikeDescription({ hike }: { hike: HikeDescriptionData })
   return (
     <section style={{ background: "#f3eee8", color: "#673C33", padding: "1.5rem" }}>
       <header style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-        <h1 style={{ margin: 0 }}>{hike.name}, {hike.location}</h1>
+        <h1 style={{ fontWeight: "bold" }}>{hike.name}, {hike.location}</h1>
        <button
   onClick={toggleSaved}
   aria-pressed={saved}
@@ -94,7 +94,7 @@ export default function HikeDescription({ hike }: { hike: HikeDescriptionData })
         </Link>
       </div>
 
-      <h2 style={{ textTransform: "uppercase" }}>{hike.headline}</h2>
+      <h2 style={{ fontWeight: "bold" }}>{hike.headline}</h2>
       <p>{renderDescription(hike.description)}</p>
     </section>
   );

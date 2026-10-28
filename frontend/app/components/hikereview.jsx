@@ -1,6 +1,8 @@
-export default function HikeReview({ reviews }) {
+import { Link } from "react-router";
+
+export default function HikeReview({ reviews, hikeId }) {
     return (
-       <div className="font-sans min-h-screen bg-gray-50 p-8">
+      <div className="bg-background px-8 py-3 font-body">
        <img
       src="/Mappart/Itemr.png"
          alt="Review"
@@ -10,7 +12,9 @@ export default function HikeReview({ reviews }) {
       Show all
     </p>
     <h1 className="text-2xl font-bold text-[#673C33]">
-    Rate this hike <span aria-hidden="true">→</span>
+      <Link to={`/reviews?hike=${hikeId}`}>
+        Rate this hike <span aria-hidden="true">→</span>
+      </Link>
     </h1>
     <div className="mt-4 space-y-4">
       {reviews.length === 0 ? (
@@ -27,7 +31,7 @@ export default function HikeReview({ reviews }) {
               <div className="flex items-center justify-between gap-4">
                 <h2 className="font-semibold text-[#673C33]">{review.review_title}</h2>
                 <p
-                  className="text-lg text-[#F4D78B]"
+                  className="text-lg text-[#FFC100]"
                   aria-label={review["Star rating"]}
                 >
                   {Array.from({ length: 5 }, (_, index) =>

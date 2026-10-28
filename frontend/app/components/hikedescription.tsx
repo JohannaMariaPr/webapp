@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { Link } from "react-router";
 
 export type HikeDescriptionData = {
+  id: string | number;
   name: string;
   location: string;
   distanceKm: number;
@@ -13,7 +15,7 @@ export type HikeDescriptionData = {
 
 function Stars({ rating }: { rating: number }) {
   return (
-    <span aria-label={`${rating} out of 5 stars`} style={{ color: "#F4D78B", fontSize: "2rem" }}>
+    <span aria-label={`${rating} out of 5 stars`} style={{ color: "#FFC100", fontSize: "2rem" }}>
       {[1, 2, 3, 4, 5].map((n) => (n <= Math.round(rating) ? "★" : "☆"))}
     </span>
   );
@@ -44,20 +46,34 @@ function BookmarkIcon({ filled }: { filled: boolean }) {
 }
 
 export default function HikeDescription({ hike }: { hike: HikeDescriptionData }) {
-  const [saved, setSaved] = useState(false);
+  const [saved, setSaved] = useState(() => {
+    if (typeof window === "undefined") return false;
+    const savedHikes = JSON.parse(localStorage.getItem("savedHikes") || "[]") as Array<string | number>;
+    return savedHikes.some((id) => String(id) === String(hike.id));
+  });
+
+  function toggleSaved() {
+    const savedHikes = JSON.parse(localStorage.getItem("savedHikes") || "[]") as Array<string | number>;
+    const nextSaved = saved
+      ? savedHikes.filter((id) => String(id) !== String(hike.id))
+      : [...savedHikes, hike.id];
+
+    localStorage.setItem("savedHikes", JSON.stringify(nextSaved));
+    setSaved(!saved);
+  }
 
   return (
     <section style={{ background: "#f3eee8", color: "#673C33", padding: "1.5rem" }}>
       <header style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
         <h1 style={{ margin: 0 }}>{hike.name}, {hike.location}</h1>
        <button
-  onClick={() => setSaved(!saved)}
+  onClick={toggleSaved}
   aria-pressed={saved}
   aria-label={saved ? "Remove hike from saved hikes" : "Save this hike"}
   style={{
     background: "none",
     border: "none",
-    color: saved ? "#your-saved-color" : "#673C33",
+    color: saved ? "#F4D78B" : "#673C33",
     cursor: "pointer",
     padding: 0,
   }}
@@ -70,7 +86,12 @@ export default function HikeDescription({ hike }: { hike: HikeDescriptionData })
 
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <Stars rating={hike.rating} />
-        <a href="#rate" style={{ color: "inherit", fontWeight: 600 }}>Rate this hike</a>
+        <Link
+          to={`/reviews?hike=${hike.id}`}
+          style={{ color: "inherit", fontWeight: 600, textDecoration: "underline" }}
+        >
+          Rate this hike
+        </Link>
       </div>
 
       <h2 style={{ textTransform: "uppercase" }}>{hike.headline}</h2>

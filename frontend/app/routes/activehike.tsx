@@ -58,7 +58,10 @@ const filters: { label: string; kind: Kind }[] = [
 ];
 
 export function meta({}: Route.MetaArgs) {
-  return [{ title: "Walk" }, { name: "description", content: "Follow the trail." }];
+  return [
+    { title: "Active Hike" },
+    { name: "description", content: "Information about the active hike." },
+  ];
 }
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
@@ -207,9 +210,8 @@ export default function ActiveHike({ loaderData }: Route.ComponentProps) {
               {f.label}
             </button>
           ))}
-          {/* Opens the 360 viewer (route "view360" in routes.ts) */}
           <Link
-            to="/view360"
+            to={`/hikedetails/${id}`}
             aria-label="360 view"
             className="ml-auto grid size-12 place-items-center rounded-full bg-white/70 text-xs font-bold text-[#7C9DD2] shadow-md"
           >

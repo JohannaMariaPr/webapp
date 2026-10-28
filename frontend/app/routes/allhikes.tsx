@@ -1,39 +1,43 @@
 import { useEffect, useState } from "react";
 import HikeCard from "../components/HikeCard";
-
-/*I HAVE NO IDEA WHY THE HOOK IS NOT HOOKING BUT IT IS HOOKING TFDYM*/
+import SearchBar from "../components/SearchBar";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_KEY;
 
-
-const response = await fetch(`${supabaseUrl}/rest/v1/hikes?select=*`, {
-  headers: {
-    apikey: supabaseKey,
-  },
-
-});
+interface Painting {
+  id: string | number;
+  title?: string;
+  artist?: string;
+  location?: string;
+  hike_id?: string | number;
+}
 
 interface Hike {
   id: string | number;
+  title?: string;
+  location?: string;
+  paintings?: Painting[];
   [key: string]: unknown;
 }
 
 export default function AllHikes() {
   const [hikes, setHikes] = useState<Hike[]>([]);
+  const [search, setSearch] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    console.log("effect running", { supabaseUrl, hasKey: !!supabaseKey });
-
     async function fetchHikes() {
       try {
-        const response = await fetch(`${supabaseUrl}/rest/v1/hikes?select=*`, {
-          headers: {
-            apikey: supabaseKey,
-            Authorization: `Bearer ${supabaseKey}`,
-          },
-        });
+        const response = await fetch(
+          `${supabaseUrl}/rest/v1/hikes?select=*,paintings(*)`,
+          {
+            headers: {
+              apikey: supabaseKey,
+              Authorization: `Bearer ${supabaseKey}`,
+            },
+          }
+        );
 
         if (!response.ok) {
           throw new Error(`Failed to fetch hikes: ${response.status}`);
@@ -42,28 +46,76 @@ export default function AllHikes() {
         const data = await response.json();
         setHikes(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Unknown error");
+        setError(
+          err instanceof Error ? err.message : "Unknown error"
+        );
       }
     }
 
     fetchHikes();
   }, []);
 
+  const filteredHikes = hikes.filter((hike) => {
+    const query = search.trim().toLowerCase();
+
+    if (!query) {
+      return true;
+    }
+
+    const matchesHike =
+      hike.title?.toLowerCase().includes(query) ?? false;
+
+    const matchesLocation =
+      hike.location?.toLowerCase().includes(query) ?? false;
+
+    const matchesPainting =
+      hike.paintings?.some((painting) =>
+        painting.title?.toLowerCase().includes(query)
+      ) ?? false;
+
+    const matchesArtist =
+      hike.paintings?.some((painting) =>
+        painting.artist?.toLowerCase().includes(query)
+      ) ?? false;
+
+    return (
+      matchesHike ||
+      matchesLocation ||
+      matchesPainting ||
+      matchesArtist
+    );
+  });
+
   if (error) {
     return <p>{error}</p>;
   }
 
   return (
-    
     <main className="p-6">
-      <h1 className="mb-4 text-3xl font-bold">All Hikes</h1>
-      <p>Welcome to the All Hikes page!</p>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {hikes.map((hike) => (
+      <h1 className="mb-2 text-3xl font-bold">
+        Explore All Hikes
+      </h1>
+
+      <p className="mb-4">
+        Discover hikes, paintings, artists, and locations.
+      </p>
+
+      <SearchBar
+        value={search}
+        onChange={setSearch}
+      />
+
+      <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {filteredHikes.map((hike) => (
           <HikeCard key={hike.id} hike={hike} />
         ))}
       </div>
+
+      {filteredHikes.length === 0 && (
+        <p className="mt-6">
+          No hikes found.
+        </p>
+      )}
     </main>
   );
-  
 }

@@ -30,6 +30,9 @@ export const links: Route.LinksFunction = () => [
      rel: "stylesheet",
      href: "https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&display=swap",
    },
+
+  { rel: "icon", href: "/logoicon.svg", type: "image/svg+xml" },
+  
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {

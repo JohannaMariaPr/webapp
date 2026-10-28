@@ -30,8 +30,8 @@ function renderDescription(text: string) {
 function BookmarkIcon({ filled }: { filled: boolean }) {
   return (
     <svg
-      width="48"
-      height="52"
+      width="36"
+      height="39"
       viewBox="0 0 24 26"
       fill={filled ? "#F4D78B" : "none"}
       stroke="#673C33"
@@ -65,7 +65,15 @@ export default function HikeDescription({ hike }: { hike: HikeDescriptionData })
   return (
     <section style={{ background: "#f3eee8", color: "#673C33", padding: "1.5rem" }}>
       <header style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-        <h1 style={{ fontWeight: "bold" }}>{hike.name}, {hike.location}</h1>
+        <h1
+          style={{
+            fontSize: "2rem",
+            fontWeight: "bold",
+            textTransform: "uppercase",
+          }}
+        >
+          {hike.name}
+        </h1>
        <button
   onClick={toggleSaved}
   aria-pressed={saved}
@@ -94,8 +102,8 @@ export default function HikeDescription({ hike }: { hike: HikeDescriptionData })
         </Link>
       </div>
 
-      <h2 style={{ fontWeight: "bold" }}>{hike.headline}</h2>
-      <p>{renderDescription(hike.description)}</p>
+      <h2 style={{ fontWeight: "bold", marginBottom: "1rem" }}>{hike.headline}</h2>
+      <p style={{ marginTop: 0 }}>{renderDescription(hike.description)}</p>
     </section>
   );
 }

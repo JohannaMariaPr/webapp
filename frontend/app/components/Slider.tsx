@@ -25,12 +25,17 @@ export default function Slider({ beforeImage, afterImage }: SliderProps) {
 	return (
 		<div
 			ref={sliderRef}
-			className="relative aspect-video w-full max-w-3xl overflow-hidden select-none"
+			className="relative aspect-video w-full touch-none overflow-hidden select-none"
+			onPointerDown={(event) => {
+	event.currentTarget.setPointerCapture(event.pointerId);
+	updatePosition(event);
+}}
 			onPointerMove={(event) => {
-				if (event.buttons === 1) {
-					updatePosition(event);
-				}
-			}}
+	if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+		updatePosition(event);
+	}
+}}
+			
 		>
 			<img
 				src={beforeImage}
@@ -55,7 +60,7 @@ export default function Slider({ beforeImage, afterImage }: SliderProps) {
 			<button
 				type="button"
 				aria-label="Drag to compare images"
-				className="absolute inset-y-0 z-10 w-1 -translate-x-1/2 cursor-ew-resize bg-white shadow-lg"
+				className="absolute inset-y-0 z-10 w-1 -translate-x-1/2 cursor-ew-resize touch-none bg-white shadow-lg"
 				style={{ left: `${position}%` }}
 				onPointerDown={(event) => {
 					event.currentTarget.setPointerCapture(event.pointerId);

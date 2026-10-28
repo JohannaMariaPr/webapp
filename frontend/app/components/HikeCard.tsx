@@ -6,7 +6,15 @@ import {
 } from "lucide-react";
 
 interface Review {
-  rating: string;
+  "Star rating": string;
+}
+
+interface Painting {
+  id: string | number;
+  title: string;
+  artist?: string;
+  picture?: string;
+  featured?: boolean;
 }
 
 interface Hike {
@@ -17,16 +25,7 @@ interface Hike {
   duration_min?: number;
   duration_max?: number;
   difficulty?: string;
-
-  reviews?: Review[];
-}
-
-interface Painting {
-  id: string | number;
-  title: string;
-  artist?: string;
-  picture?: string;
-  featured?: boolean;
+  Reviews?: Review[];
 }
 
 interface HikeCardProps {
@@ -46,25 +45,24 @@ export default function HikeCard({
   // ----------------------------------------
 
   function parseRating(rating: string) {
-    const value = Number(rating.split("/")[0]);
+    const value = Number(
+      rating.split("/")[0].trim()
+    );
 
-    return Number.isNaN(value)
-      ? 0
-      : value;
+    return Number.isNaN(value) ? 0 : value;
   }
 
   const ratings =
-    hike.reviews
+    hike.Reviews
       ?.map((review) =>
-        parseRating(review.rating)
+        parseRating(review["Star rating"])
       )
       .filter((rating) => rating > 0) ?? [];
 
   const averageRating =
     ratings.length > 0
       ? ratings.reduce(
-          (sum, rating) =>
-            sum + rating,
+          (sum, rating) => sum + rating,
           0
         ) / ratings.length
       : 0;
@@ -81,27 +79,20 @@ export default function HikeCard({
       return null;
     }
 
-    if (
-      max == null ||
-      max === min
-    ) {
+    if (max == null || max === min) {
       if (min < 60) {
         return `${min} min`;
       }
 
-      const hours =
-        min / 60;
+      const hours = min / 60;
 
       return Number.isInteger(hours)
         ? `${hours} h`
         : `${hours.toFixed(1)} h`;
     }
 
-    const minHours =
-      min / 60;
-
-    const maxHours =
-      max / 60;
+    const minHours = min / 60;
+    const maxHours = max / 60;
 
     const formattedMin =
       Number.isInteger(minHours)
@@ -116,19 +107,21 @@ export default function HikeCard({
     return `${formattedMin}–${formattedMax} h`;
   }
 
-  const duration =
-    formatDuration();
+  const duration = formatDuration();
 
   return (
     <article
       className="
-        relative
-        overflow-hidden
-        rounded-2xl
-        bg-[#FFF8F3]
-        text-[#673C33]
-        shadow-lg
-      "
+    relative
+    flex
+    h-full
+    flex-col
+    overflow-hidden
+    rounded-2xl
+    bg-[#FFF8F3]
+    text-[#673C33]
+    shadow-lg
+  "
     >
       {/* Close button - only used on Map */}
       {onClose && (
@@ -160,7 +153,7 @@ export default function HikeCard({
 
       {/* Top images */}
       <div className="grid grid-cols-2">
-        {/* Painting */}
+        {/* Painting image */}
         <div className="aspect-square overflow-hidden bg-[#E8E2DC]">
           {painting.picture ? (
             <img
@@ -190,35 +183,22 @@ export default function HikeCard({
       </div>
 
       {/* Content */}
-      <div className="p-4">
+      <div className="flex flex-1 flex-col p-4">
         {/* Rating */}
-        <div
-          className="
-            mb-3
-            flex
-            items-center
-            gap-1
-            text-[#FFB000]
-          "
-        >
-          {[1, 2, 3, 4, 5].map(
-            (star) => (
-              <span
-                key={star}
-                className="text-xl"
-              >
-                {star <=
-                Math.round(
-                  averageRating
-                )
-                  ? "★"
-                  : "☆"}
-              </span>
-            )
-          )}
+        <div className="mb-3 flex items-center gap-1 text-[#FFB000]">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <span
+              key={star}
+              className="text-xl"
+            >
+              {star <= Math.round(averageRating)
+                ? "★"
+                : "☆"}
+            </span>
+          ))}
         </div>
 
-        {/* Stats */}
+        {/* Distance / duration / difficulty */}
         <div
           className="
             mb-2
@@ -231,28 +211,20 @@ export default function HikeCard({
           "
         >
           {hike.distance_km != null && (
-            <span>
-              {hike.distance_km} km
-            </span>
+            <span>{hike.distance_km} km</span>
           )}
 
           {duration && (
             <>
               <span>•</span>
-
-              <span>
-                {duration}
-              </span>
+              <span>{duration}</span>
             </>
           )}
 
           {hike.difficulty && (
             <>
               <span>•</span>
-
-              <span>
-                {hike.difficulty}
-              </span>
+              <span>{hike.difficulty}</span>
             </>
           )}
         </div>
@@ -261,7 +233,7 @@ export default function HikeCard({
         <h2
           className="
             mb-2
-            text-[clamp(1.6rem,4vw,2rem)]
+            text-[clamp(1.5rem,3.8vw,1.8rem)]
             font-bold
             uppercase
             leading-none
@@ -272,13 +244,7 @@ export default function HikeCard({
 
         {/* Short hike description */}
         {hike.description_short && (
-          <p
-            className="
-              mb-3
-              text-sm
-              leading-snug
-            "
-          >
+          <p className="mb-3 text-sm leading-snug">
             {hike.description_short}
           </p>
         )}
@@ -299,9 +265,7 @@ export default function HikeCard({
             className="mt-0.5 shrink-0"
           />
 
-          <span>
-            {painting.title}
-          </span>
+          <span>{painting.title}</span>
         </div>
 
         {/* Artist */}
@@ -320,17 +284,17 @@ export default function HikeCard({
               className="mt-0.5 shrink-0"
             />
 
-            <span className="underline">
+            <Link to={`/404/`} className="underline">
               {painting.artist}
-            </span>
+            </Link>
           </div>
         )}
 
         {/* Explore button */}
-        <div className="flex justify-end">
+        <div className="mt-auto flex justify-end pt-2">
           <Link
-            to={`/hike/${hike.id}`}
-            className="mt-8 rounded-2xl bg-[#D14C18] px-8 py-2.5 text-[clamp(1rem,3.5vw,1.5rem)] font-bold uppercase text-white shadow-sm transition hover:brightness-95 focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-[#879fd0]"
+            to={`/hikedetails/${hike.id}`}
+            className="rounded-full bg-[#D14C18] px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:brightness-95"
           >
             EXPLORE
           </Link>

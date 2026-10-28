@@ -15,7 +15,7 @@ export default function MobileViewSwitch({
       to={isMapTarget ? "/map" : "/allhikes"}
       className="
         fixed
-        bottom-[28px]
+        bottom-7
         left-1/2
         z-30
         flex

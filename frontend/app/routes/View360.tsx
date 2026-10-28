@@ -96,5 +96,3 @@ export default function View360() {
     </section>
   );
 }
-
-

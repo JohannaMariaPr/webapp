@@ -3,6 +3,7 @@ import HikeCard from "../components/HikeCard";
 import SearchBar from "../components/SearchBar";
 import DesktopFilters from "../components/filters/DesktopFilters";
 import MobileFilters from "../components/filters/MobileFilters";
+import ActiveFilterTags from "../components/filters/ActiveFilterTags";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_KEY;
@@ -166,55 +167,90 @@ export default function AllHikes() {
   }
 
   return (
-    <main className="p-6">
-      <h1 className="mb-2 text-3xl font-bold">
-        Explore All Hikes
-      </h1>
+  <main className="p-6">
+    <h1 className="mb-2 text-3xl font-bold">
+      Explore All Hikes
+    </h1>
 
-      <p className="mb-4">
-        Discover every hike, with scenic details and paintings inspired by each trail.
+    <p className="mb-4">
+      Discover every hike, with scenic details and paintings inspired by each trail.
+    </p>
+
+    {/* Desktop filters */}
+    <div className="mb-4 hidden md:block">
+      <DesktopFilters
+        distance={distance}
+        setDistance={setDistance}
+        duration={duration}
+        setDuration={setDuration}
+        difficulty={difficulty}
+        setDifficulty={setDifficulty}
+      />
+    </div>
+
+    {/* Desktop search + active filter tags */}
+    <div className="hidden md:flex md:items-center md:gap-3">
+      <div className="w-full max-w-md">
+        <SearchBar
+          value={search}
+          onChange={setSearch}
+        />
+      </div>
+
+      <ActiveFilterTags
+        distance={distance}
+        setDistance={setDistance}
+        duration={duration}
+        setDuration={setDuration}
+        difficulty={difficulty}
+        setDifficulty={setDifficulty}
+      />
+    </div>
+
+    {/* Mobile search + filter button */}
+    <div className="flex items-center gap-3 md:hidden">
+      <div className="flex-1">
+        <SearchBar
+          value={search}
+          onChange={setSearch}
+        />
+      </div>
+
+      <MobileFilters
+        distance={distance}
+        setDistance={setDistance}
+        duration={duration}
+        setDuration={setDuration}
+        difficulty={difficulty}
+        setDifficulty={setDifficulty}
+      />
+    </div>
+
+    {/* Mobile active filter tags */}
+    <div className="mt-2 md:hidden">
+      <ActiveFilterTags
+        distance={distance}
+        setDistance={setDistance}
+        duration={duration}
+        setDuration={setDuration}
+        difficulty={difficulty}
+        setDifficulty={setDifficulty}
+      />
+    </div>
+
+    {/* Hike cards */}
+    <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+      {filteredHikes.map((hike) => (
+        <HikeCard key={hike.id} hike={hike} />
+      ))}
+    </div>
+
+    {/* No results */}
+    {filteredHikes.length === 0 && (
+      <p className="mt-6">
+        No hikes found.
       </p>
-
-      <div className="mb-4">
-        <DesktopFilters
-          distance={distance}
-          setDistance={setDistance}
-          duration={duration}
-          setDuration={setDuration}
-          difficulty={difficulty}
-          setDifficulty={setDifficulty}
-        />
-      </div>
-
-      <div className="flex items-center gap-3">
-        <div className="flex-1">
-          <SearchBar
-            value={search}
-            onChange={setSearch}
-          />
-        </div>
-
-        <MobileFilters
-          distance={distance}
-          setDistance={setDistance}
-          duration={duration}
-          setDuration={setDuration}
-          difficulty={difficulty}
-          setDifficulty={setDifficulty}
-        />
-      </div>
-
-      <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {filteredHikes.map((hike) => (
-          <HikeCard key={hike.id} hike={hike} />
-        ))}
-      </div>
-
-      {filteredHikes.length === 0 && (
-        <p className="mt-6">
-          No hikes found.
-        </p>
-      )}
-    </main>
+    )}
+  </main>
   );
 }

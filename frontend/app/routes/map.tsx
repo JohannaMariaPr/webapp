@@ -239,18 +239,22 @@ const [hikes, setHikes] = useState<Hike[]>([]);
     if (mapRef.current) return;
     if (paintings.length === 0) return;
 
-    const map = new MapLibreMap({
-      container: mapContainer.current,
+    const isMobile = window.innerWidth < 768;
 
-      // Temporary MapLibre demo map
-      style: "https://demotiles.maplibre.org/style.json",
+const map = new MapLibreMap({
+  container: mapContainer.current,
 
+        // Temporary MapLibre demo map
+
+  style: "https://demotiles.maplibre.org/style.json",
       // [longitude, latitude]
-      center: [10.9, 55.9],
 
-      // Default Denmark zoom
-      zoom: 8,
-    });
+  center: isMobile
+    ? [11.7, 55.7]
+    : [10.9, 55.7],
+
+  zoom: 7,
+});
 
     mapRef.current = map;
 
@@ -570,12 +574,15 @@ clusterPinImage.src = "/pins/cluster-pin.png";
   }, [paintings]);
 
   return (
-    <main className="p-6">
+    <main className="flex h-screen flex-col overflow-hidden">
+
+{/* Content above map keeps padding */}
+    <div className="px-6 pt-6">
       <h1 className="mb-2 text-3xl font-bold">
         Explore Map
       </h1>
 
-      <p className="mb-4">
+      <p className="mb-3.5">
         Explore the map, select a location, and discover paintings inspired by its landscape.
       </p>
 
@@ -642,13 +649,13 @@ clusterPinImage.src = "/pins/cluster-pin.png";
             />
           </div>
 
-
+</div>
 
       {/* Map wrapper */}
-      <div className="mt-4 relative">
+      <div className="relative mt-2 min-h-0 flex-1">
         <div
           ref={mapContainer}
-          className="h-[600px] w-full overflow-hidden rounded-2xl"
+          className="h-full w-full overflow-hidden"
         />
 
         {/* Test painting card overlay*/}

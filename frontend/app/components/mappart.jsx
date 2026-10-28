@@ -10,7 +10,7 @@ export default function MapPart() {
           Follow the Trail
         </h1>
 
-        <p className="text-sm text-[#673C33]">
+        <p className="max-w-[220px] text-sm leading-6 text-[#673C33]">
           Here's an overview of the hiking route and the 
           surrounding landscape.
         </p>

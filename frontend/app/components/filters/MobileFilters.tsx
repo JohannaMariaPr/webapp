@@ -50,7 +50,7 @@ export default function MobileFilters({
           rounded-full
           border
           border-[#673C33]
-          bg-[#F7F0E9]
+          bg-[#FFFDF9]
           text-[#673C33]
         "
         aria-label="Open filters"
@@ -216,7 +216,7 @@ export default function MobileFilters({
                 shadow-sm
               "
             >
-              View Results
+              VIEW RESULTS
             </button>
           </div>
         </div>

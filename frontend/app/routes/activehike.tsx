@@ -9,7 +9,7 @@ import viewImage from "../../images/view.jpeg";
 import fossilIcon from "../../images/Vectorfosil.svg"; // the fossil pin icon
 import loadingBar from "../../images/Loadingbar.svg"; // hiker + progress bar
 
-// The map is just a picture (any size, portrait works best)
+// picture of map
 const MAP_IMAGE = mapImage;
 
 type Kind = "restaurant" | "spotlight" | "fossil";
@@ -112,7 +112,7 @@ function Glyph({ kind, className = "size-6" }: { kind: Kind; className?: string 
   );
 }
 
-// Pin colours: blue for places to visit; the fossil spot uses the Vectorfossil.svg picture
+// Pin colours
 function Pin({ kind }: { kind: Kind }) {
   if (kind === "fossil")
     return <img src={fossilIcon} alt="" className="size-11 drop-shadow-md" draggable={false} />;
@@ -128,10 +128,11 @@ function Pin({ kind }: { kind: Kind }) {
 export default function ActiveHike({ loaderData }: Route.ComponentProps) {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+
   // Which filter chips are switched on (none = show every pin)
   const [active, setActive] = useState<Kind[]>([]);
 
-  // The fossil spot counts as a Spotlight Area, so it hides when only Restaurants is switched on
+ 
   const visible = (kind: Kind) => {
     const group: Kind = kind === "fossil" ? "spotlight" : kind;
     return active.length === 0 || active.includes(group);
@@ -210,13 +211,22 @@ export default function ActiveHike({ loaderData }: Route.ComponentProps) {
               {f.label}
             </button>
           ))}
-          <Link
-            to={`/hikedetails/${id}`}
-            aria-label="360 view"
-            className="ml-auto grid size-12 place-items-center rounded-full bg-white/70 text-xs font-bold text-[#7C9DD2] shadow-md"
-          >
-            360
-          </Link>
+
+          {/* to link the 360 view button */}
+          <span className="relative ml-auto grid size-16 place-items-center">
+  {/* expanding ring, behind the button */}
+  <span
+    className="pointer-events-none absolute inset-0 rounded-full bg-[#7C9DD2]/60 motion-safe:animate-ping"
+    aria-hidden="true"
+  />
+  <Link
+    to="/View360"
+    aria-label="360 view"
+    className="relative grid size-16 place-items-center rounded-full bg-background text-base font-bold text-ink shadow-md focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-[#879fd0]"
+  >
+    360
+  </Link>
+</span>
         </div>
       </section>
 

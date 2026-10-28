@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router";
+import { Link, useNavigate, useParams } from "react-router";
 import type { Route } from "./+types/hikedetails";
 import { useState } from "react";
 import Slider from "../components/Slider";
@@ -44,6 +44,43 @@ export function meta({}: Route.MetaArgs) {
     { title: "Hike Detail" },
     { name: "description", content: "Detailed information about a specific hike." },
   ];
+}
+
+function StartHikeButton({
+  name,
+  distanceKm,
+  duration,
+  difficulty,
+}: {
+  name: string;
+  distanceKm: number;
+  duration: string;
+  difficulty: string;
+}) {
+  const navigate = useNavigate();
+
+  const handleStartHike = () => {
+    const params = new URLSearchParams({
+      name,
+      distance: `${distanceKm} km`,
+      duration,
+      difficulty,
+    });
+    const destination =
+      window.innerWidth <= 768 ? "/hikeonboarding" : "/sendtodevice";
+
+    navigate(`${destination}?${params.toString()}`);
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={handleStartHike}
+      className="rounded-full bg-[#D14C18] px-5 py-3 font-semibold text-[white] shadow-sm transition hover:brightness-95"
+    >
+      Start Hike
+    </button>
+  );
 }
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
@@ -133,11 +170,12 @@ export default function HikeDetail({ loaderData }: Route.ComponentProps) {
         >
           Back to Hikes
         </Link>
-        <button
-          className="rounded-full  bg-[#D14C18] px-5 py-3 font-semibold text-[white] shadow-sm transition hover:brightness-95"
-        >
-          Start Hike
-        </button>
+        <StartHikeButton
+          name={loaderData.name}
+          distanceKm={loaderData.distanceKm}
+          duration={loaderData.duration}
+          difficulty={loaderData.difficulty}
+        />
       </div>
        <MapPart />
       <img
@@ -154,11 +192,12 @@ export default function HikeDetail({ loaderData }: Route.ComponentProps) {
         >
           Back to Hikes
         </Link>
-        <button
-          className="rounded-full  bg-[#D14C18] px-5 py-3 font-semibold text-[white] shadow-sm transition hover:brightness-95"
-        >
-          Start Hike
-        </button>
+        <StartHikeButton
+          name={loaderData.name}
+          distanceKm={loaderData.distanceKm}
+          duration={loaderData.duration}
+          difficulty={loaderData.difficulty}
+        />
       </div>
     </div>
   );

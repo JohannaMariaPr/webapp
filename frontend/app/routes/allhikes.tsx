@@ -177,7 +177,7 @@ export default function AllHikes() {
     </p>
 
     {/* Desktop filters */}
-    <div className="mb-4 hidden md:block">
+    <div className="mb-2 hidden md:block">
       <DesktopFilters
         distance={distance}
         setDistance={setDistance}

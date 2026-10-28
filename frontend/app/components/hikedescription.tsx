@@ -30,8 +30,8 @@ function renderDescription(text: string) {
 function BookmarkIcon({ filled }: { filled: boolean }) {
   return (
     <svg
-      width="48"
-      height="52"
+      width="36"
+      height="39"
       viewBox="0 0 24 26"
       fill={filled ? "#F4D78B" : "none"}
       stroke="#673C33"

@@ -216,7 +216,7 @@ export default function MobileFilters({
                 shadow-sm
               "
             >
-              View Results
+              VIEW RESULTS
             </button>
           </div>
         </div>

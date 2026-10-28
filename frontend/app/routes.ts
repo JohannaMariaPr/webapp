@@ -11,4 +11,5 @@ route("featureview", "routes/featureview.tsx"),
 route("hikedetails/:id", "routes/hikedetails.tsx"),
 route("hikeonboarding", "routes/hikeonboarding.tsx"),
 route("*", "routes/404.tsx"),
+route("reviews", "routes/AllReviews.tsx"),
 ] satisfies RouteConfig;

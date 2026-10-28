@@ -1,3 +1,4 @@
+import { Link, useParams } from "react-router";
 import type { Route } from "./+types/hikedetails";
 import Slider from "../components/Slider";
 import HikeDescription from "../components/hikedescription";
@@ -62,6 +63,8 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
 }
 
 export default function HikeDetail({ loaderData }: Route.ComponentProps) {
+  const { id } = useParams<{ id: string }>();
+
   return (
     <div>
       <Slider
@@ -69,7 +72,7 @@ export default function HikeDetail({ loaderData }: Route.ComponentProps) {
         afterImage="/Sliderimages/after.png"
       />
       <HikeDescription hike={loaderData} />
-      <div className="flex justify-center gap-4 p-6">
+      <div className="flex flex-wrap justify-center gap-4 p-6">
         <button
           className="rounded-full  bg-white px-5 py-3 font-semibold text-[#673C33] shadow-sm transition hover:bg-[#f3eee8]"
         >
@@ -80,6 +83,13 @@ export default function HikeDetail({ loaderData }: Route.ComponentProps) {
         >
           Start Hike
         </button>
+        {/* Passes the hike id along so the reviews page shows (and saves) reviews for this hike */}
+        <Link
+          to={`/reviews?hike=${id}`}
+          className="rounded-full bg-white px-5 py-3 font-semibold text-[#673C33] shadow-sm transition hover:bg-[#f3eee8]"
+        >
+          Rate Hike
+        </Link>
       </div>
       <img
       src="/wonders/wonders%20picture.png"

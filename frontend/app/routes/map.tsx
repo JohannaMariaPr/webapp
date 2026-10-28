@@ -16,8 +16,9 @@ import ActiveFilterTags from "~/components/filters/ActiveFilterTags";
 import MobileFilters from "~/components/filters/MobileFilters";
 import DesktopFilters from "~/components/filters/DesktopFilters";
 import SearchBar from "~/components/SearchBar";
-
 import MobileViewSwitch from "~/components/MobileViewSwitch";
+
+import HikeCard from "~/components/HikeCard";
 
 setWorkerUrl(workerUrl);
 
@@ -47,10 +48,15 @@ interface Painting {
   featured?: boolean;
 }
 
+interface Review {
+  "Star rating": string;
+}
+
 interface Hike {
   id: string | number;
   title?: string;
   location?: string;
+  description_short?: string;
 
   distance_km?: number;
   duration_min?: number;
@@ -58,6 +64,7 @@ interface Hike {
   difficulty?: string;
 
   paintings?: Painting[];
+  Reviews?: Review[];
 
   [key: string]: unknown;
 }
@@ -78,6 +85,14 @@ export default function MapPage() {
   const [selectedPainting, setSelectedPainting] =
     useState<Painting | null>(null);
 
+    const selectedHike = selectedPainting
+  ? hikes.find(
+      (hike) =>
+        String(hike.id) ===
+        String(selectedPainting.hike_id)
+    )
+  : undefined;
+
   // --------------------------------------------------
   // FETCH HIKES + PAINTINGS
   // --------------------------------------------------
@@ -86,7 +101,7 @@ export default function MapPage() {
     async function fetchHikes() {
       try {
         const response = await fetch(
-          `${supabaseUrl}/rest/v1/hikes?select=*,paintings(*)`,
+          `${supabaseUrl}/rest/v1/hikes?select=*,paintings(*),Reviews("Star rating")`,
           {
             headers: {
               apikey: supabaseKey,
@@ -847,75 +862,41 @@ map.setPaintProperty(
           ref={mapContainer}
           className="h-full w-full overflow-hidden"
         />
+        </div>
 
-        {/* Temporary painting card overlay */}
-        {selectedPainting && (
-          <div
-            className="
-              absolute
-              inset-0
-              z-20
-              flex
-              items-center
-              justify-center
-              bg-black/20
-            "
-            onClick={() =>
-              setSelectedPainting(
-                null
-              )
-            }
-          >
-            <div
-              className="
-                relative
-                w-[320px]
-                rounded-2xl
-                bg-[#FFF8F3]
-                p-4
-                shadow-lg
-              "
-              onClick={(event) =>
-                event.stopPropagation()
-              }
-            >
-              <button
-                type="button"
-                onClick={() =>
-                  setSelectedPainting(
-                    null
-                  )
-                }
-                className="
-                  absolute
-                  right-3
-                  top-3
-                  text-xl
-                  text-[#673C33]
-                "
-                aria-label="Close hike card"
-              >
-                ×
-              </button>
-
-              <h2 className="pr-8 text-lg font-semibold text-[#673C33]">
-                {
-                  selectedPainting.title
-                }
-              </h2>
-
-              {selectedPainting.artist && (
-                <p className="mt-1 text-sm text-[#673C33]">
-                  {
-                    selectedPainting.artist
-                  }
-                </p>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
-
+       {/* Hike card overlay */}
+{selectedPainting && selectedHike && (
+  <div
+    className="
+      absolute
+      inset-0
+      z-20
+      flex
+      items-center
+      justify-center
+      bg-black/20
+      p-4
+    "
+    onClick={() =>
+      setSelectedPainting(null)
+    }
+  >
+    <div
+      className="w-full max-w-105"
+      onClick={(event) =>
+        event.stopPropagation()
+      }
+    >
+      <HikeCard
+        hike={selectedHike}
+        painting={selectedPainting}
+        onClose={() =>
+          setSelectedPainting(null)
+        }
+      />
+    </div>
+  </div>
+)}
       <MobileViewSwitch target="cards" />
     </main>
   );

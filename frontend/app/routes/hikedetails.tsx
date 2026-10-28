@@ -133,12 +133,11 @@ export default function HikeDetail({ loaderData }: Route.ComponentProps) {
         >
           Back to Hikes
         </Link>
-        <Link
-          to={`/hikeonboarding?name=${encodeURIComponent(loaderData.name)}&distance=${encodeURIComponent(`${loaderData.distanceKm} km`)}&duration=${encodeURIComponent(loaderData.duration)}&difficulty=${encodeURIComponent(loaderData.difficulty)}`}
+        <button
           className="rounded-full  bg-[#D14C18] px-5 py-3 font-semibold text-[white] shadow-sm transition hover:brightness-95"
         >
           Start Hike
-        </Link>
+        </button>
       </div>
        <MapPart />
       <img
@@ -155,12 +154,11 @@ export default function HikeDetail({ loaderData }: Route.ComponentProps) {
         >
           Back to Hikes
         </Link>
-        <Link
-          to={`/hikeonboarding?name=${encodeURIComponent(loaderData.name)}&distance=${encodeURIComponent(`${loaderData.distanceKm} km`)}&duration=${encodeURIComponent(loaderData.duration)}&difficulty=${encodeURIComponent(loaderData.difficulty)}`}
+        <button
           className="rounded-full  bg-[#D14C18] px-5 py-3 font-semibold text-[white] shadow-sm transition hover:brightness-95"
         >
           Start Hike
-        </Link>
+        </button>
       </div>
     </div>
   );

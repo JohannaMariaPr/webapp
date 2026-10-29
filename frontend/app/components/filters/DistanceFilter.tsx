@@ -1,8 +1,12 @@
+// Props received from the parent component.
+// value is the currently selected distance, onChange updates the selected value
+
 interface DistanceFilterProps {
   value: string | null;
   onChange: (value: string | null) => void;
 }
 
+// Available distance options shown as filter buttons
 const distanceOptions = [
   { label: "< 2 km", value: "under-2" },
   { label: "2-5 km", value: "2-5" },
@@ -17,16 +21,20 @@ export default function DistanceFilter({
 }: DistanceFilterProps) {
   return (
     <div className="flex flex-wrap gap-3">
+      {/* Create one button for each distance option. */}
       {distanceOptions.map((option) => {
+        // Check if this option is currently selected
         const isSelected = value === option.value;
 
         return (
           <button
             key={option.value}
             type="button"
+            // Select the option, or remove it if it is already selected
             onClick={() =>
               onChange(isSelected ? null : option.value)
             }
+            // Change the button style when the option is selected
             className={`
               rounded-full
               border

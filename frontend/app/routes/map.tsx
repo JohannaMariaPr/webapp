@@ -45,11 +45,9 @@ interface Painting {
   location_verified?: boolean;
   featured?: boolean;
 }
-
 interface Review {
   "Star rating": string;
 }
-
 interface Hike {
   id: string | number;
   title?: string;

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Link } from "react-router";
 
 export type HikeDescriptionData = {
@@ -11,6 +10,10 @@ export type HikeDescriptionData = {
   rating: number;
   headline: string;
   description: string;
+};
+
+type HikeDescriptionProps = {
+  hike: HikeDescriptionData;
   isSaved: boolean;
   isSaving: boolean;
   onToggleSaved: () => void;
@@ -48,27 +51,20 @@ export function BookmarkIcon({ filled }: { filled: boolean }) {
   );
 }
 
-export default function HikeDescription({ hike, isSaved,
+export default function HikeDescription({
+  hike,
+  isSaved,
   isSaving,
-  onToggleSaved }: { hike: HikeDescriptionData }) {
-  const [saved, setSaved] = useState(() => {
-    if (typeof window === "undefined") return false;
-    const savedHikes = JSON.parse(localStorage.getItem("savedHikes") || "[]") as Array<string | number>;
-    return savedHikes.some((id) => String(id) === String(hike.id));
-  });
-
-  function toggleSaved() {
-    const savedHikes = JSON.parse(localStorage.getItem("savedHikes") || "[]") as Array<string | number>;
-    const nextSaved = saved
-      ? savedHikes.filter((id) => String(id) !== String(hike.id))
-      : [...savedHikes, hike.id];
-
-    localStorage.setItem("savedHikes", JSON.stringify(nextSaved));
-    setSaved(!saved);
-  }
-
+  onToggleSaved,
+}: HikeDescriptionProps) {
   return (
-    <section style={{ background: "#f3eee8", color: "#673C33", padding: "1.5rem" }}>
+    <section
+      style={{
+        background: "#f3eee8",
+        color: "#673C33",
+        padding: "1.5rem",
+      }}
+    >
       <header style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
         <h1
           style={{
@@ -89,7 +85,7 @@ export default function HikeDescription({ hike, isSaved,
   style={{
     background: "none",
     border: "none",
-    color: saved ? "#F4D78B" : "#673C33",
+    color: isSaved ? "#F4D78B" : "#673C33",
     cursor: "pointer",
     padding: 0,
   }}

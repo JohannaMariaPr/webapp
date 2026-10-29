@@ -7,6 +7,7 @@ import SearchBar from "../components/SearchBar";
 import MapPart from "../components/mappart";
 import HikeReview from "../components/hikereview";
 import ArtistPart from "../components/artistpart";
+import useSavedHike from "~/hooks/useSavedHike";
 
 
 interface HikeRow {
@@ -47,11 +48,13 @@ export function meta({}: Route.MetaArgs) {
 }
 
 function StartHikeButton({
+  hikeId,
   name,
   distanceKm,
   duration,
   difficulty,
 }: {
+  hikeId?: string;
   name: string;
   distanceKm: number;
   duration: string;
@@ -66,6 +69,9 @@ function StartHikeButton({
       duration,
       difficulty,
     });
+    if (hikeId) {
+      params.set("id", hikeId);
+    }
     const destination =
       window.innerWidth <= 768 ? "/hikeonboarding" : "/sendtodevice";
 
@@ -152,6 +158,12 @@ export default function HikeDetail({ loaderData }: Route.ComponentProps) {
   const { id } = useParams<{ id: string }>();
   const [searchValue, setSearchValue] = useState("");
 
+  const {
+  isSaved,
+  isLoading,
+  toggleSaved,
+} = useSavedHike(loaderData.id);
+
   return (
     <div className="min-h-screen bg-background p-8 font-body">
       <header className="flex justify-center p-6">
@@ -162,7 +174,9 @@ export default function HikeDetail({ loaderData }: Route.ComponentProps) {
         beforeImage="/Sliderimages/before.webp"
         afterImage="/Sliderimages/after.png"
       />
-      <HikeDescription hike={loaderData} />
+      <HikeDescription hike={loaderData} isSaved={isSaved}
+  isSaving={isLoading}
+  onToggleSaved={toggleSaved}/>
       <div className="flex flex-wrap justify-center gap-4 p-6">
         <Link
           to="/allhikes"
@@ -171,6 +185,7 @@ export default function HikeDetail({ loaderData }: Route.ComponentProps) {
           Back to Hikes
         </Link>
         <StartHikeButton
+          hikeId={id}
           name={loaderData.name}
           distanceKm={loaderData.distanceKm}
           duration={loaderData.duration}
@@ -193,6 +208,7 @@ export default function HikeDetail({ loaderData }: Route.ComponentProps) {
           Back to Hikes
         </Link>
         <StartHikeButton
+          hikeId={id}
           name={loaderData.name}
           distanceKm={loaderData.distanceKm}
           duration={loaderData.duration}

@@ -32,6 +32,7 @@ interface Hike {
   duration_min?: number;
   duration_max?: number;
   difficulty?: string;
+  route_picture?: string;
 
   paintings?: Painting[];
   Reviews?: Review[];

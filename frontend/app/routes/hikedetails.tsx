@@ -48,11 +48,13 @@ export function meta({}: Route.MetaArgs) {
 }
 
 function StartHikeButton({
+  hikeId,
   name,
   distanceKm,
   duration,
   difficulty,
 }: {
+  hikeId?: string;
   name: string;
   distanceKm: number;
   duration: string;
@@ -67,6 +69,9 @@ function StartHikeButton({
       duration,
       difficulty,
     });
+    if (hikeId) {
+      params.set("id", hikeId);
+    }
     const destination =
       window.innerWidth <= 768 ? "/hikeonboarding" : "/sendtodevice";
 
@@ -180,6 +185,7 @@ export default function HikeDetail({ loaderData }: Route.ComponentProps) {
           Back to Hikes
         </Link>
         <StartHikeButton
+          hikeId={id}
           name={loaderData.name}
           distanceKm={loaderData.distanceKm}
           duration={loaderData.duration}
@@ -202,6 +208,7 @@ export default function HikeDetail({ loaderData }: Route.ComponentProps) {
           Back to Hikes
         </Link>
         <StartHikeButton
+          hikeId={id}
           name={loaderData.name}
           distanceKm={loaderData.distanceKm}
           duration={loaderData.duration}

@@ -80,7 +80,7 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   return hike;
 }
 
-// Small round-cornered icons, drawn inline (no extra package)
+// round-cornered icons, drawn inline
 function Glyph({ kind, className = "size-6" }: { kind: Kind; className?: string }) {
   const common = {
     viewBox: "0 0 24 24",
@@ -113,7 +113,7 @@ function Glyph({ kind, className = "size-6" }: { kind: Kind; className?: string 
   );
 }
 
-// Pin colours
+// pin colors
 function Pin({ kind }: { kind: Kind }) {
   if (kind === "fossil")
     return <img src={fossilIcon} alt="" className="size-11 drop-shadow-md" draggable={false} />;
@@ -129,7 +129,7 @@ function Pin({ kind }: { kind: Kind }) {
 export default function ActiveHike({ loaderData }: Route.ComponentProps) {
   const { id } = useParams<{ id: string }>();
 
-  // Which filter chips are switched on (none = show every pin)
+  // filter chips are on (none = show every pin)
   const [active, setActive] = useState<Kind[]>([]);
 
  
@@ -149,11 +149,11 @@ export default function ActiveHike({ loaderData }: Route.ComponentProps) {
         description={loaderData.description_short}
       />
 
-      {/* Map picture with pins on top */}
+      {/* map picture with pins on top */}
       <section className="relative h-[34rem] overflow-hidden bg-[#c9e6d8]" aria-label="Map of the trail">
         <img src={MAP_IMAGE} alt="" className="absolute inset-0 size-full object-cover" draggable={false} />
 
-        {/* Zoom and compass: for show, like the design */}
+        {/* zoom and compass are a lie cause its a picture */}
         <div className="absolute right-4 top-4 flex flex-col gap-4">
           <div className="grid overflow-hidden rounded-xl bg-white/95 shadow-md">
             <span className="grid size-10 place-items-center text-xl font-bold">+</span>
@@ -181,7 +181,7 @@ export default function ActiveHike({ loaderData }: Route.ComponentProps) {
           ) : null,
         )}
 
-        {/* Filter chips and 360 button */}
+        {/* filter chips and 360 button */}
         <div className="absolute inset-x-4 bottom-12 flex items-center gap-3">
           {filters.map((f) => (
             <button
@@ -199,7 +199,7 @@ export default function ActiveHike({ loaderData }: Route.ComponentProps) {
 
           {/* to link the 360 view button */}
           <span className="relative ml-auto grid size-16 place-items-center">
-  {/* expanding ring, behind the button */}
+  {/* expanding ring animation-ish */}
   <span
     className="pointer-events-none absolute inset-0 rounded-full bg-[#7C9DD2]/60 motion-safe:animate-ping"
     aria-hidden="true"
@@ -215,7 +215,7 @@ export default function ActiveHike({ loaderData }: Route.ComponentProps) {
         </div>
       </section>
 
-      {/* Bottom sheet: overlaps the map with rounded top corners */}
+      {/* bottom sheet - overlaps the map with rounded top corners */}
       <section className="relative -mt-9 rounded-t-[2.5rem] bg-background px-6 pb-4 pt-3">
         <span className="mx-auto block h-1.5 w-12 rounded-full bg-ink/15" aria-hidden="true" />
         <h2 className="mt-6 text-center text-[clamp(1.25rem,5vw,1.5rem)] font-bold uppercase">
@@ -223,7 +223,7 @@ export default function ActiveHike({ loaderData }: Route.ComponentProps) {
         </h2>
 
         <div className="relative mt-6">
-          {/* The hiker and the progress bar are one picture (Loadingbar.svg) */}
+          {/* The hiker and the progress bar are one picture */}
           <img
             src={loadingBar}
             alt="About 70% of the trail walked"
@@ -237,7 +237,7 @@ export default function ActiveHike({ loaderData }: Route.ComponentProps) {
         </div>
       </section>
 
-      {/* Stops along the way */}
+      {/* stops cards at the bottom */}
       <ul className="flex flex-col gap-3 bg-mist/10 px-3 pb-8 pt-3">
         {places.map((place) => (
           <li

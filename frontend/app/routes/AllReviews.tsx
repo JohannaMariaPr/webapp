@@ -35,7 +35,7 @@ export default function AllReviews() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // 1. Look up the hike's title from its id (hikes.title), for the heading and the form
+  // look up the hike's title from its id (hikes.title)
   useEffect(() => {
     setHikeTitle("");
     if (!hikeId) return;
@@ -67,7 +67,7 @@ export default function AllReviews() {
     };
   }, [hikeId]);
 
-  // 2. Fetch only the reviews whose hike_id equals this hike's id (all reviews if no hike is selected)
+  // fetch only the reviews whose hike_id equals this hike's id
   const fetchReviews = useCallback(async () => {
     try {
       const filter = hikeId ? `&hike_id=eq.${encodeURIComponent(hikeId)}` : "";
@@ -77,7 +77,7 @@ export default function AllReviews() {
       );
 
       if (!response.ok) {
-        // Include Supabase's own message so the real cause is visible on the page
+        // supabase's own message so the real cause is visible on the page
         const details = await response.text();
         throw new Error(`Failed to fetch reviews: ${response.status} ${details}`);
       }
@@ -104,7 +104,7 @@ export default function AllReviews() {
   const visibleReviews = reviews.slice(0, visibleCount);
   const hasMore = visibleCount < reviews.length;
 
-// Text break in titles
+// text break in titles
 function splitTitle(title: string, max = 35): string[] {
   const lines: string[] = [];
   let rest = title.trim();
@@ -122,7 +122,7 @@ function splitTitle(title: string, max = 35): string[] {
 
   return (
     <main>
-      {/* Long hike names break onto several lines (splitTitle) */}
+      {/* long hike names break onto several lines (splitTitle) */}
       <Header
         title={splitTitle(hikeId && hikeTitle ? hikeTitle : "Reviews").map((line, i) => (
           <span key={i} className="block">
@@ -136,11 +136,11 @@ function splitTitle(title: string, max = 35): string[] {
         }
       />
 
-      {/* Mobile: everything centered. lg and up: left-aligned text. */}
+      {/* mobile: everything centered */}
       <div className="p-6 text-center lg:text-left">
-      {/* Mobile: stacked + centered. lg and up: form on the left, reviews on the right. */}
+      {/* mobile: stacked + centered */}
       <div className="flex flex-col items-center gap-10 lg:flex-row lg:items-start lg:gap-16">
-        {/* Add review (left) */}
+        {/* Add review */}
         <section className="w-full max-w-xl lg:sticky lg:top-6 lg:w-2/5">
           <ReviewForm
             hikeId={hikeId}
@@ -149,7 +149,7 @@ function splitTitle(title: string, max = 35): string[] {
           />
         </section>
 
-        {/* Reviews (right) */}
+        {/* Reviews */}
         <section className="w-full max-w-3xl lg:flex-1">
           <h2 className="mb-2 text-paragraph font-semibold leading-snug">
             ALL REVIEWS

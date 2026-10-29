@@ -1,17 +1,8 @@
 import { Link, useNavigate } from "react-router";
 import SearchBar from "./SearchBar";
 
-// Header used at the top of All Hikes, Saved, Hike Detail and Active Hike.
-//
-//   <Header title="Explore all hikes" description="Discover every hike..." />
-//   <Header title="Saved hikes" description="..." showSearch />
-//   <Header title="Explore all hikes" description="..." showSearch searchValue={search} onSearchChange={setSearch} />
-//
-// - title / description: any text (the title is shown in capitals)
-// - showSearch: adds the search bar (+ filter button) under the text
-// - showFilter: set to {false} to hide the filter button and keep only the search bar
-// - searchValue / onSearchChange: only needed when the search really filters something;
-//   without them the search bar is just for looks
+// header title + description + search bar
+
 export default function Header({
   title,
   description,
@@ -26,8 +17,7 @@ export default function Header({
 
   return (
     <header className={`bg-background px-6 pb-4 pt-5 text-ink ${className}`}>
-      {/* Top row: back arrow on the left, profile on the right.
-          The right padding leaves room for the menu button the sidebar puts in the corner on a phone. */}
+      {/* back button + profile */}
       <div className="mb-3 flex items-center justify-between pr-12 min-[761px]:pr-0">
         <button
           type="button"
@@ -57,7 +47,7 @@ export default function Header({
       <h1 className="text-[clamp(1.75rem,8vw,2.8125rem)] font-bold uppercase leading-tight">
         {title}
       </h1>
-      {/* line-clamp-2: more than 2 lines of text are cut with "..." */}
+      {/* more than 2 lines of text are cut with "..." */}
       <p className="mt-1 line-clamp-2 max-w-md text-[clamp(1rem,3.8vw,1.3125rem)] leading-snug">
         {description}
       </p>

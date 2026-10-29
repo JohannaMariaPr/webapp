@@ -1,7 +1,6 @@
 import { Link } from "react-router";
 
-// Each group opens and closes like an accordion (native <details>, works with keyboard and screen readers).
-// Change the labels and paths here; they must match routes.ts.
+// collapsible menu, labels match routes
 const groups = [
   {
     title: "Explore",
@@ -27,7 +26,6 @@ const groups = [
   },
 ];
 
-// Put the real profile links here
 const socials = [
   {
     label: "Instagram",

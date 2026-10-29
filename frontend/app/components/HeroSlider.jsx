@@ -1,23 +1,20 @@
 import { useEffect, useState } from "react";
 
-// images:   [{ src: "https://...", alt: "optional description" }, ...]
-// interval: milliseconds each image stays on screen
-// children: whatever should sit on top of the images (title, text...)
 export default function HeroSlider({
   images,
-  interval = 5000,
+  interval = 3000,
   className = "",
-  children,
+  children, // whatever should sit on top of the images
 }) {
   const count = images.length;
 
-  // index === count means "showing the cloned first slide" (see handleTransitionEnd)
+  // index === count (showing the cloned first slide...see handleTransitionEnd)
   const [index, setIndex] = useState(0);
   const [animate, setAnimate] = useState(true);
   const [paused, setPaused] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
 
-  // Respect "reduce motion": no automatic sliding for those users
+  // respect "reduce motion" means no automatic sliding for those users
   useEffect(() => {
     const query = window.matchMedia("(prefers-reduced-motion: reduce)");
     setReduceMotion(query.matches);
@@ -27,7 +24,7 @@ export default function HeroSlider({
     return () => query.removeEventListener("change", onChange);
   }, []);
 
-  // Automatic slide
+  // automatic slide
   useEffect(() => {
     if (count < 2 || paused || reduceMotion) return;
 
@@ -39,8 +36,8 @@ export default function HeroSlider({
     return () => clearInterval(id);
   }, [count, interval, paused, reduceMotion]);
 
-  // After sliding onto the clone of the first image, jump back to the real first
-  // image without animation, so the slider loops forward forever.
+  // after sliding onto the clone of the first image, jump back to the real first as components on figma
+  
   function handleTransitionEnd(e) {
     if (e.target !== e.currentTarget) return;
     if (index === count) {
@@ -49,7 +46,7 @@ export default function HeroSlider({
     }
   }
 
-  // Turn the animation back on right after that silent jump
+  // turn the animation back on right 
   useEffect(() => {
     if (animate) return;
     const id = requestAnimationFrame(() =>
@@ -67,11 +64,7 @@ export default function HeroSlider({
       aria-label="Featured hikes and paintings"
       // bg-mist is the muted brown from app.css, shown until the images have loaded
       className={`relative overflow-hidden bg-mist/40 ${className}`}
-      // Pause while a mouse is over it or a keyboard user is focused inside it
-      onPointerEnter={(e) => e.pointerType === "mouse" && setPaused(true)}
-      onPointerLeave={(e) => e.pointerType === "mouse" && setPaused(false)}
-      onFocus={() => setPaused(true)}
-      onBlur={() => setPaused(false)}
+    
     >
       <div
         className={`flex h-full ${
@@ -95,7 +88,7 @@ export default function HeroSlider({
         ))}
       </div>
 
-      {/* Soft dark fade so the white text stays readable on bright images */}
+      {/* dark fade so the white text stays readable */}
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
 
       <div className="absolute inset-0">{children}</div>
@@ -112,7 +105,7 @@ export default function HeroSlider({
                 setAnimate(true);
                 setIndex(i);
               }}
-              // same focus ring as the rest of the site (outline #879fd0 in app.css)
+              // focus ring 
               className={`size-2.5 rounded-full border border-white/70 transition focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-[#879fd0] ${
                 i === activeDot ? "bg-white" : "bg-white/20"
               }`}

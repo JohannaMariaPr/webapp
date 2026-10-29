@@ -776,7 +776,7 @@ export default function MapPage() {
       {/* Page heading */}
       <Header
         title="Map"
-        description="Explore the map, select a location, and discover paintings inspired by its landscape."
+        description="Explore the map, select a location, and discover paintings."
       />
 
       {/* Search and filters (the header has its own padding, so only the side padding is needed here) */}

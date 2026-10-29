@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import HikeCard from "~/components/HikeCard";
+import Header from "~/components/Header";
+import Footer from "~/components/Footer";
 import SearchBar from "~/components/SearchBar";
 import DesktopFilters from "~/components/filters/DesktopFilters";
 import MobileFilters from "~/components/filters/MobileFilters";
@@ -104,6 +106,14 @@ export default function Saved() {
     loadSavedHikes();
   }, []);
 
+  // Same header on every state of the page (loading, error, list)
+  const pageHeader = (
+    <Header
+      title="Saved hikes"
+      description="View and manage all the hikes you've saved for your next adventure."
+    />
+  );
+
   // Turn the saved rows into hikes first
   const savedHikes = savedRows
     .map((row) => row.hikes)
@@ -204,42 +214,40 @@ export default function Saved() {
 
   if (loading) {
     return (
-      <main className="p-6">
-        <h1 className="mb-4 text-3xl font-bold">
-          SAVED HIKES
-        </h1>
+      <main>
+        {pageHeader}
 
-        <p>Loading saved hikes...</p>
+        <div className="p-6">
+          <p>Loading saved hikes...</p>
+        </div>
+
+        <Footer />
       </main>
     );
   }
 
   if (error) {
     return (
-      <main className="p-6">
-        <h1 className="mb-4 text-3xl font-bold">
-          SAVED HIKES
-        </h1>
+      <main>
+        {pageHeader}
 
-        <p className="text-red-600">
-          {error}
-        </p>
+        <div className="p-6">
+          <p className="text-red-600">
+            {error}
+          </p>
+        </div>
+
+        <Footer />
       </main>
     );
   }
 
   return (
     <main>
+      {pageHeader}
 
-      <div className="p-6">
-      <h1 className="mb-2 text-3xl font-bold">
-        SAVED HIKES
-      </h1>
-
-      <p className="mb-4">
-        Your saved hikes are collected here for easy access.
-      </p>
-
+      {/* Search and filters (the header has its own padding, so only the side padding is needed here) */}
+      <div className="px-6 pb-6">
       {/* Desktop filters */}
       <div className="mb-2 hidden md:block">
         <DesktopFilters
@@ -302,6 +310,7 @@ export default function Saved() {
         />
       </div>
 </div>
+
       {/* No saved hikes */}
       {savedRows.length === 0 ? (
   <section className="
@@ -393,6 +402,8 @@ export default function Saved() {
           )}
         </>
       )}
+
+      <Footer />
     </main>
   );
 }

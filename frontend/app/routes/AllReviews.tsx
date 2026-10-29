@@ -2,6 +2,8 @@ import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 import ReviewCard from "../components/ReviewCard";
 import ReviewForm from "../components/ReviewForm";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_KEY;
@@ -119,16 +121,23 @@ function splitTitle(title: string, max = 35): string[] {
 }
 
   return (
-    // Mobile: everything centered. lg and up: left-aligned text.
-    <main className="p-6 text-center lg:text-left">
-      <h1 className="mb-8 font-heading text-subheader font-extrabold leading-tight">
-  {splitTitle(hikeId && hikeTitle ? hikeTitle : "Reviews").map((line, i) => (
-    <span key={i} className="block">
-      {line}
-    </span>
-  ))}
-</h1>
+    <main>
+      {/* Long hike names break onto several lines (splitTitle) */}
+      <Header
+        title={splitTitle(hikeId && hikeTitle ? hikeTitle : "Reviews").map((line, i) => (
+          <span key={i} className="block">
+            {line}
+          </span>
+        ))}
+        description={
+          hikeId
+            ? "Read what other hikers say about this trail and share your own experience."
+            : "Read what hikers say about our trails and share your own experience."
+        }
+      />
 
+      {/* Mobile: everything centered. lg and up: left-aligned text. */}
+      <div className="p-6 text-center lg:text-left">
       {/* Mobile: stacked + centered. lg and up: form on the left, reviews on the right. */}
       <div className="flex flex-col items-center gap-10 lg:flex-row lg:items-start lg:gap-16">
         {/* Add review (left) */}
@@ -170,6 +179,9 @@ function splitTitle(title: string, max = 35): string[] {
           )}
         </section>
       </div>
+      </div>
+
+      <Footer />
     </main>
   );
 }

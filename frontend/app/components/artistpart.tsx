@@ -1,4 +1,19 @@
-export default function ArtistPart({ paintings = [] }) {
+type Painting = {
+    id?: string | number;
+    title?: string;
+    artist?: string;
+    location?: string;
+    description?: string;
+    artist_description?: string;
+    image?: string;
+    picture?: string;
+};
+
+type ArtistPartProps = {
+    paintings?: Painting[];
+};
+
+export default function ArtistPart({ paintings = [] }: ArtistPartProps) {
     // Use the first painting for the main artist information.
     const artist = paintings[0];
 

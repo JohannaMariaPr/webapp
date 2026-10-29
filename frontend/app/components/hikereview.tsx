@@ -1,6 +1,19 @@
 import { Link } from "react-router";
 
-export default function HikeReview({ reviews, hikeId }) {
+type Review = {
+  id: number;
+  "Star rating": string;
+  review_title: string;
+  "Review description": string;
+  Picture: string;
+};
+
+type HikeReviewProps = {
+  reviews: Review[];
+  hikeId?: string;
+};
+
+export default function HikeReview({ reviews, hikeId }: HikeReviewProps) {
     return (
       <div className="bg-background px-8 py-3 font-body">
        {/* Show the review section image. */}

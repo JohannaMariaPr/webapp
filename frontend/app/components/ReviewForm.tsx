@@ -1,5 +1,16 @@
 import { useEffect, useState } from "react";
 
+type HikeOption = {
+  id: string | number;
+  title: string;
+};
+
+type ReviewFormProps = {
+  hikeId?: string;
+  hikeTitle?: string;
+  onSubmitted?: () => void;
+};
+
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_KEY;
 
@@ -16,18 +27,18 @@ const labelClass = "flex flex-col gap-1 text-details font-medium";
 // hikeId (optional): when given, the Hike field is locked to hikeTitle
 // (the title of that hike, loaded by the parent). Without it, the user picks an
 // existing hike from a dropdown, so every review is linked to a real hikes.id.
-export default function ReviewForm({ hikeId, hikeTitle = "", onSubmitted }) {
+export default function ReviewForm({ hikeId, hikeTitle = "", onSubmitted }: ReviewFormProps) {
   const locked = Boolean(hikeId);
 
-  const [hikes, setHikes] = useState([]); // options for the dropdown
+  const [hikes, setHikes] = useState<HikeOption[]>([]); // options for the dropdown
   const [selectedId, setSelectedId] = useState("");
   const [reviewTitle, setReviewTitle] = useState("");
   const [rating, setRating] = useState(5);
   const [description, setDescription] = useState("");
   const [picture, setPicture] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [message, setMessage] = useState(null);
-  const [error, setError] = useState(null);
+  const [message, setMessage] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const loadingHike = locked && !hikeTitle;
   const idToSave = locked ? hikeId : selectedId;
@@ -52,7 +63,7 @@ export default function ReviewForm({ hikeId, hikeTitle = "", onSubmitted }) {
     fetchHikes();
   }, [locked]);
 
-  async function handleSubmit(e) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
     if (!idToSave) {

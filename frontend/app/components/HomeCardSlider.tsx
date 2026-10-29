@@ -1,15 +1,27 @@
 import { useRef } from "react";
 import { Link } from "react-router";
 
+type HomeCard = {
+  id: string | number;
+  title: string;
+  subtitle?: string;
+  image: string;
+};
+
+type HomeCardSliderProps = {
+  cards?: HomeCard[];
+  hrefFor?: (card: HomeCard) => string;
+};
+
 const GAP_PX = 20; // = gap-5
 
 // cards:   [{ id, title, subtitle, image }]
 // hrefFor: (card) => the page a card opens
-export default function HomeCardSlider({ cards = [], hrefFor }) {
-  const trackRef = useRef(null);
+export default function HomeCardSlider({ cards = [], hrefFor }: HomeCardSliderProps) {
+  const trackRef = useRef<HTMLDivElement>(null);
 
   // Arrow buttons (for mouse users): scroll by one card
-  function scrollByCard(direction) {
+  function scrollByCard(direction: number) {
     const track = trackRef.current;
     if (!track) return;
 

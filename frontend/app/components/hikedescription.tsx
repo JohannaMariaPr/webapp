@@ -11,6 +11,9 @@ export type HikeDescriptionData = {
   rating: number;
   headline: string;
   description: string;
+  isSaved: boolean;
+  isSaving: boolean;
+  onToggleSaved: () => void;
 };
 
 function Stars({ rating }: { rating: number }) {
@@ -27,13 +30,13 @@ function renderDescription(text: string) {
   );
 }
 
-function BookmarkIcon({ filled }: { filled: boolean }) {
+export function BookmarkIcon({ filled }: { filled: boolean }) {
   return (
     <svg
       width="36"
       height="39"
       viewBox="0 0 24 26"
-      fill={filled ? "#F4D78B" : "none"}
+      fill={filled ? "#F4D78B" : "#F6EFE9"}
       stroke="#673C33"
       strokeWidth="2"
       strokeLinejoin="round"
@@ -45,7 +48,9 @@ function BookmarkIcon({ filled }: { filled: boolean }) {
   );
 }
 
-export default function HikeDescription({ hike }: { hike: HikeDescriptionData }) {
+export default function HikeDescription({ hike, isSaved,
+  isSaving,
+  onToggleSaved }: { hike: HikeDescriptionData }) {
   const [saved, setSaved] = useState(() => {
     if (typeof window === "undefined") return false;
     const savedHikes = JSON.parse(localStorage.getItem("savedHikes") || "[]") as Array<string | number>;
@@ -75,9 +80,12 @@ export default function HikeDescription({ hike }: { hike: HikeDescriptionData })
           {hike.name}
         </h1>
        <button
-  onClick={toggleSaved}
-  aria-pressed={saved}
-  aria-label={saved ? "Remove hike from saved hikes" : "Save this hike"}
+  type="button"
+  onClick={onToggleSaved}
+  disabled={isSaving}
+  aria-label={
+    isSaved ? "Remove saved hike" : "Save hike"
+  }
   style={{
     background: "none",
     border: "none",
@@ -86,7 +94,7 @@ export default function HikeDescription({ hike }: { hike: HikeDescriptionData })
     padding: 0,
   }}
 >
-  <BookmarkIcon filled={saved} />
+  <BookmarkIcon filled={isSaved} />
 </button>
       </header>
 

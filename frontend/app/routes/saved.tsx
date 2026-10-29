@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import HikeCard from "~/components/HikeCard";
+import Header from "~/components/Header";
+import Footer from "~/components/Footer";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_KEY;
@@ -92,82 +94,93 @@ export default function Saved() {
     loadSavedHikes();
   }, []);
 
+  // Same header on every state of the page (loading, error, list)
+  const pageHeader = (
+    <Header
+      title="Saved hikes"
+      description="View and manage all the hikes you've saved for your next adventure."
+    />
+  );
+
   if (loading) {
     return (
-      <main className="p-6">
-        <h1 className="mb-4 text-3xl font-bold">
-          SAVED HIKES
-        </h1>
+      <main>
+        {pageHeader}
 
-        <p>Loading saved hikes...</p>
+        <div className="p-6">
+          <p>Loading saved hikes...</p>
+        </div>
+
+        <Footer />
       </main>
     );
   }
 
   if (error) {
     return (
-      <main className="p-6">
-        <h1 className="mb-4 text-3xl font-bold">
-          SAVED HIKES
-        </h1>
+      <main>
+        {pageHeader}
 
-        <p className="text-red-600">
-          {error}
-        </p>
+        <div className="p-6">
+          <p className="text-red-600">
+            {error}
+          </p>
+        </div>
+
+        <Footer />
       </main>
     );
   }
 
   return (
-    <main className="p-6">
-      <h1 className="mb-2 text-3xl font-bold">
-        SAVED HIKES
-      </h1>
+    <main>
+      {pageHeader}
 
-      <p className="mb-6">
-        Your saved hikes are collected here for easy access.
-      </p>
+      {/* The header has its own padding, so the rest keeps the old p-6 here */}
+      <div className="p-6">
+        {savedRows.length === 0 ? (
+          <p>
+            You haven't saved any hikes yet.
+          </p>
+        ) : (
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {savedRows.map((savedRow) => {
+              const hike = savedRow.hikes;
 
-      {savedRows.length === 0 ? (
-        <p>
-          You haven't saved any hikes yet.
-        </p>
-      ) : (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {savedRows.map((savedRow) => {
-            const hike = savedRow.hikes;
+              if (!hike) {
+                return null;
+              }
 
-            if (!hike) {
-              return null;
-            }
+              const featuredPainting =
+                hike.paintings?.find(
+                  (painting) => painting.featured
+                ) ?? hike.paintings?.[0];
 
-            const featuredPainting =
-              hike.paintings?.find(
-                (painting) => painting.featured
-              ) ?? hike.paintings?.[0];
+              if (!featuredPainting) {
+                return null;
+              }
 
-            if (!featuredPainting) {
-              return null;
-            }
+              return (
+                <HikeCard
+                  key={savedRow.id}
+                  hike={hike}
+                  painting={featuredPainting}
+                  onUnsave={(hikeId) => {
+                    setSavedRows((currentRows) =>
+                      currentRows.filter(
+                        (row) =>
+                          String(row.hike_id) !== String(hikeId)
+                      )
+                    );
+                  }}
+                />
+              );
+            })}
+          </div>
+        )}
+      </div>
 
-            return (
-              <HikeCard
-  key={savedRow.id}
-  hike={hike}
-  painting={featuredPainting}
-  onUnsave={(hikeId) => {
-    setSavedRows((currentRows) =>
-      currentRows.filter(
-        (row) =>
-          String(row.hike_id) !== String(hikeId)
-      )
-    );
-  }}
-/>
-            );
-          })}
-        </div>
-      )}
+      <Footer />
     </main>
   );
 }

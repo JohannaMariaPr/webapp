@@ -17,6 +17,7 @@ import MobileFilters from "~/components/filters/MobileFilters";
 import DesktopFilters from "~/components/filters/DesktopFilters";
 import SearchBar from "~/components/SearchBar";
 import MobileViewSwitch from "~/components/MobileViewSwitch";
+import Header from "~/components/Header";
 
 import HikeCard from "~/components/HikeCard";
 
@@ -776,15 +777,13 @@ map.setPaintProperty(
 
   return (
     <main className="flex h-screen flex-col overflow-hidden">
-      {/* Content above map */}
-      <div className="px-6 pt-6">
-        <h1 className="mb-2 text-3xl font-bold">
-          MAP
-        </h1>
+      <Header
+        title="Map"
+        description="Explore the map, select a location, and discover paintings inspired by its landscape."
+      />
 
-        <p className="mb-3.5">
-          Explore the map, select a location, and discover paintings inspired by its landscape.
-        </p>
+      {/* Content above map (the header has its own padding, so only the side padding is needed here) */}
+      <div className="px-6">
 
         {error && (
           <p className="mb-3 text-sm text-red-600">

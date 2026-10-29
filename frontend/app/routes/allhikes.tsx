@@ -5,6 +5,8 @@ import DesktopFilters from "../components/filters/DesktopFilters";
 import MobileFilters from "../components/filters/MobileFilters";
 import ActiveFilterTags from "../components/filters/ActiveFilterTags";
 import MobileViewSwitch from "~/components/MobileViewSwitch";
+import Header from "~/components/Header";
+import Footer from "~/components/Footer";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_KEY;
@@ -176,15 +178,14 @@ export default function AllHikes() {
   }
 
   return (
-  <main className="p-6">
-    <h1 className="mb-2 text-3xl font-bold">
-      EXPLORE ALL HIKES
-    </h1>
+  <main>
+    <Header
+      title="Explore all hikes"
+      description="Discover every hike, with scenic details and paintings inspired by each trail."
+    />
 
-    <p className="mb-4">
-      Discover every hike, with scenic details and paintings inspired by each trail.
-    </p>
-
+    {/* The header has its own padding, so the rest gets its own side padding here */}
+    <div className="px-6 pb-6">
     {/* Desktop filters */}
     <div className="mb-2 hidden md:block">
       <DesktopFilters
@@ -278,7 +279,9 @@ export default function AllHikes() {
 
 
     <MobileViewSwitch target="map" />
-    
+    </div>
+
+    <Footer />
   </main>
   );
 }

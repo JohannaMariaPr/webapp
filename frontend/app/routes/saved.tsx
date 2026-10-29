@@ -1,22 +1,24 @@
 import { useEffect, useState } from "react";
 import HikeCard from "~/components/HikeCard";
-import Header from "~/components/Header";
-import Footer from "~/components/Footer";
 import SearchBar from "~/components/SearchBar";
 import DesktopFilters from "~/components/filters/DesktopFilters";
 import MobileFilters from "~/components/filters/MobileFilters";
 import ActiveFilterTags from "~/components/filters/ActiveFilterTags";
 import { Link } from "react-router";
 
+// Supabase connection values from the env file
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_KEY;
 
+// Temporary demo account used until real authentication is added
 const DEMO_ACCOUNT_ID = 1;
 
+// Review data used by HikeCard to calculate ratings
 interface Review {
   "Star rating": string;
 }
 
+// Painting and hike data used by HikeCard to display the hike and its featured painting
 interface Painting {
   id: string | number;
   title: string;
@@ -40,6 +42,8 @@ interface Hike {
   Reviews?: Review[];
 }
 
+// Represents one row from the saved_hikes table
+// The related hike is included through the Supabase relationship
 interface SavedHikeRow {
   id: string | number;
   account_id: string | number;
@@ -58,19 +62,25 @@ export function meta() {
 }
 
 export default function Saved() {
+  // Saved hike rows belonging to the demo account
   const [savedRows, setSavedRows] = useState<SavedHikeRow[]>([]);
 
+  // Search and filter values
   const [search, setSearch] = useState("");
   const [distance, setDistance] = useState<string | null>(null);
   const [duration, setDuration] = useState<string | null>(null);
   const [difficulty, setDifficulty] = useState<string | null>(null);
 
+  // Loading and error states for the Supabase request
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // FETCH SAVED HIKES
   useEffect(() => {
     async function loadSavedHikes() {
       try {
+        // Fetch saved rows for the demo account
+        // The related hike, paintings and review ratings are included in the same Supabase request
         const response = await fetch(
           `${supabaseUrl}/rest/v1/saved_hikes?account_id=eq.${DEMO_ACCOUNT_ID}&select=id,account_id,hike_id,hikes(*,paintings(*),Reviews("Star rating"))`,
           {
@@ -81,6 +91,7 @@ export default function Saved() {
           }
         );
 
+        // Stop if Supabase does not return a successful response
         if (!response.ok) {
           const errorText = await response.text();
 
@@ -91,6 +102,7 @@ export default function Saved() {
 
         const data = await response.json();
 
+        // Store the returned saved hike rows in state
         setSavedRows(data);
       } catch (err) {
         setError(
@@ -99,27 +111,24 @@ export default function Saved() {
             : "Could not load saved hikes"
         );
       } finally {
+        // Loading is finished whether the request succeeds or fails
         setLoading(false);
       }
     }
 
+    // Load saved hikes once when the page first mounts
     loadSavedHikes();
   }, []);
 
-  // Same header on every state of the page (loading, error, list)
-  const pageHeader = (
-    <Header
-      title="Saved hikes"
-      description="View and manage all the hikes you've saved for your next adventure."
-    />
-  );
-
-  // Turn the saved rows into hikes first
+  // GET HIKES FFROM SAVED ROWS
+  // Extract the actual hike objects from the saved_hikes rows
+  // Null values are removed so the result only contains valid hikes
   const savedHikes = savedRows
     .map((row) => row.hikes)
     .filter((hike): hike is Hike => hike !== null);
 
   // Filter saved hikes
+  // same search and filter logic as the All Hikes page, but only to hikes that the user has saved
   const filteredHikes = savedHikes.filter((hike) => {
     const query = search.trim().toLowerCase();
 
@@ -136,6 +145,7 @@ export default function Saved() {
       );
 
     // DISTANCE
+    // Default to true so all hikes are shown when no distance filter is selected
     let matchesDistance = true;
 
     if (distance) {
@@ -169,6 +179,7 @@ export default function Saved() {
       const min = hike.duration_min ?? 0;
       const max = hike.duration_max ?? min;
 
+      // Use the middle of the estimated duration range to decide which duration category the hike belongs to
       const averageDuration = (min + max) / 2;
 
       if (duration === "under-1") {
@@ -202,7 +213,7 @@ export default function Saved() {
     const matchesDifficulty =
       !difficulty ||
       hike.difficulty?.toLowerCase() ===
-        difficulty.toLowerCase();
+      difficulty.toLowerCase();
 
     return (
       Boolean(matchesSearch) &&
@@ -212,128 +223,128 @@ export default function Saved() {
     );
   });
 
+  // LOADING / ERROR STATES
   if (loading) {
     return (
-      <main>
-        {pageHeader}
+      <main className="p-6">
+        <h1 className="mb-4 text-3xl font-bold">
+          SAVED HIKES
+        </h1>
 
-        <div className="p-6">
-          <p>Loading saved hikes...</p>
-        </div>
-
-        <Footer />
+        <p>Loading saved hikes...</p>
       </main>
     );
   }
 
   if (error) {
     return (
-      <main>
-        {pageHeader}
+      <main className="p-6">
+        <h1 className="mb-4 text-3xl font-bold">
+          SAVED HIKES
+        </h1>
 
-        <div className="p-6">
-          <p className="text-red-600">
-            {error}
-          </p>
-        </div>
-
-        <Footer />
+        <p className="text-red-600">
+          {error}
+        </p>
       </main>
     );
   }
 
   return (
     <main>
-      {pageHeader}
+      {/* Page heading, filters and search */}
+      <div className="p-6">
+        <h1 className="mb-2 text-3xl font-bold">
+          SAVED HIKES
+        </h1>
 
-      {/* Search and filters (the header has its own padding, so only the side padding is needed here) */}
-      <div className="px-6 pb-6">
-      {/* Desktop filters */}
-      <div className="mb-2 hidden md:block">
-        <DesktopFilters
-          distance={distance}
-          setDistance={setDistance}
-          duration={duration}
-          setDuration={setDuration}
-          difficulty={difficulty}
-          setDifficulty={setDifficulty}
-        />
-      </div>
+        <p className="mb-4">
+          Your saved hikes are collected here for easy access.
+        </p>
 
-      {/* Desktop search + active filter tags */}
-      <div className="hidden md:flex md:items-center md:gap-3">
-        <div className="w-full max-w-md">
-          <SearchBar
-            value={search}
-            onChange={setSearch}
+        {/* Desktop filters */}
+        <div className="mb-2 hidden md:block">
+          <DesktopFilters
+            distance={distance}
+            setDistance={setDistance}
+            duration={duration}
+            setDuration={setDuration}
+            difficulty={difficulty}
+            setDifficulty={setDifficulty}
           />
         </div>
 
-        <ActiveFilterTags
-          distance={distance}
-          setDistance={setDistance}
-          duration={duration}
-          setDuration={setDuration}
-          difficulty={difficulty}
-          setDifficulty={setDifficulty}
-        />
-      </div>
+        {/* Desktop search + active filter tags */}
+        <div className="hidden md:flex md:items-center md:gap-3">
+          <div className="w-full max-w-md">
+            <SearchBar
+              value={search}
+              onChange={setSearch}
+            />
+          </div>
 
-      {/* Mobile search + filter button */}
-      <div className="flex items-center gap-3 md:hidden">
-        <div className="flex-1">
-          <SearchBar
-            value={search}
-            onChange={setSearch}
+          <ActiveFilterTags
+            distance={distance}
+            setDistance={setDistance}
+            duration={duration}
+            setDuration={setDuration}
+            difficulty={difficulty}
+            setDifficulty={setDifficulty}
           />
         </div>
 
-        <MobileFilters
-          distance={distance}
-          setDistance={setDistance}
-          duration={duration}
-          setDuration={setDuration}
-          difficulty={difficulty}
-          setDifficulty={setDifficulty}
-        />
-      </div>
+        {/* Mobile search + filter button */}
+        <div className="flex items-center gap-3 md:hidden">
+          <div className="flex-1">
+            <SearchBar
+              value={search}
+              onChange={setSearch}
+            />
+          </div>
 
-      {/* Mobile active filter tags */}
-      <div className="mt-2 md:hidden">
-        <ActiveFilterTags
-          distance={distance}
-          setDistance={setDistance}
-          duration={duration}
-          setDuration={setDuration}
-          difficulty={difficulty}
-          setDifficulty={setDifficulty}
-        />
-      </div>
-</div>
+          <MobileFilters
+            distance={distance}
+            setDistance={setDistance}
+            duration={duration}
+            setDuration={setDuration}
+            difficulty={difficulty}
+            setDifficulty={setDifficulty}
+          />
+        </div>
 
-      {/* No saved hikes */}
+        {/* Mobile active filter tags */}
+        <div className="mt-2 md:hidden">
+          <ActiveFilterTags
+            distance={distance}
+            setDistance={setDistance}
+            duration={duration}
+            setDuration={setDuration}
+            difficulty={difficulty}
+            setDifficulty={setDifficulty}
+          />
+        </div>
+      </div>
+      {/* Empty state shown when the user has not saved any hikes */}
       {savedRows.length === 0 ? (
-  <section className="
-    flex flex-col items-center pb-[32vw] text-center md:pb-0
-  ">
-    <img
-      src="/images/empty-saved.png"
-      alt=""
-      className="mb-6 w-full max-w-90"
-    />
+        <section className="flex flex-col items-center pb-[32vw] text-center md:pb-0">
+          <img
+            src="/images/empty-saved.png"
+            alt=""
+            className="mb-6 w-full max-w-90"
+          />
 
-    <div className="relative z-10 px-6 md:max-w-140">
-      <h2 className="text-[clamp(1.8rem,6vw,2.4rem)] font-bold leading-tight text-[#673C33]">
-        You don’t have any saved hikes
-      </h2>
+          <div className="relative z-10 px-6 md:max-w-140">
+            <h2 className="text-[clamp(1.8rem,6vw,2.4rem)] font-bold leading-tight text-[#673C33]">
+              You don’t have any saved hikes
+            </h2>
 
-      <p className="mx-auto mt-3 max-w-[320px] text-sm leading-relaxed text-[#673C33]">
-        Find a hike you love and save it here to plan for your next adventure.
-      </p>
+            <p className="mx-auto mt-3 max-w-[320px] text-sm leading-relaxed text-[#673C33]">
+              Find a hike you love and save it here to plan for your next adventure.
+            </p>
 
-      <Link
-        to="/allhikes"
-        className="
+            <Link
+              to="/allhikes"
+              className="
           mt-5
           inline-flex
           items-center
@@ -350,27 +361,31 @@ export default function Saved() {
           transition
           hover:brightness-95
         "
-      >
-        EXPLORE HIKES
-      </Link>
-    </div>
+            >
+              EXPLORE HIKES
+            </Link>
+          </div>
 
-    <img
-      src="/images/landscape.png"
-      alt=""
-      className="fixed bottom-0 left-0 w-full md:hidden"
-    />
-  </section>
-) : (
+           {/* Decorative mobile landscape.
+              Hidden on desktop because the desktop empty state does not need the landscape illustration. */}
+          <img
+            src="/images/landscape.png"
+            alt=""
+            className="fixed bottom-0 left-0 w-full md:hidden"
+          />
+        </section>
+      ) : (
         <>
           {/* Hike cards */}
           <div className="mb-6 px-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {filteredHikes.map((hike) => {
+              // Use the painting marked as featured. If none is featured, fall back to the first painting.
               const featuredPainting =
                 hike.paintings?.find(
                   (painting) => painting.featured
                 ) ?? hike.paintings?.[0];
 
+              // A HikeCard cannot be displayed without a painting
               if (!featuredPainting) {
                 return null;
               }
@@ -381,6 +396,7 @@ export default function Saved() {
                   hike={hike}
                   painting={featuredPainting}
                   onUnsave={(hikeId) => {
+                    // Remove the unsaved hike from local page state immediately so the card disappears without a reload
                     setSavedRows((currentRows) =>
                       currentRows.filter(
                         (row) =>
@@ -402,8 +418,6 @@ export default function Saved() {
           )}
         </>
       )}
-
-      <Footer />
     </main>
   );
 }

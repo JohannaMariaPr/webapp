@@ -13,8 +13,8 @@ import MobileFilters from "~/components/filters/MobileFilters";
 import DesktopFilters from "~/components/filters/DesktopFilters";
 import SearchBar from "~/components/SearchBar";
 import MobileViewSwitch from "~/components/MobileViewSwitch";
-import Header from "~/components/Header";
 import HikeCard from "~/components/HikeCard";
+import Header from "~/components/Header";
 
 // Tells MapLibre which worker file to use & the worker handles map rendering tasks in the background
 setWorkerUrl(workerUrl);
@@ -776,12 +776,11 @@ export default function MapPage() {
       {/* Page heading */}
       <Header
         title="Map"
-        description="Explore the map, select a location, and discover paintings."
+        description="Explore the map, select a location, and discover paintings inspired by its landscape."
       />
 
-      {/* Search and filters (the header has its own padding, so only the side padding is needed here) */}
+      {/* Search and filters */}
       <div className="px-6">
-
         {error && (
           <p className="mb-3 text-sm text-red-600">
             {error}

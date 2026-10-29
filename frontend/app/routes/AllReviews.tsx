@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
+import Header from "../components/Header";
 import ReviewCard from "../components/ReviewCard";
 import ReviewForm from "../components/ReviewForm";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_KEY;
@@ -136,15 +135,14 @@ function splitTitle(title: string, max = 35): string[] {
         }
       />
 
-      {/* mobile: everything centered */}
+      {/* Mobile: everything centered. lg and up: left-aligned text. */}
       <div className="p-6 text-center lg:text-left">
-      {/* mobile: stacked + centered */}
+      {/* Mobile: stacked + centered. lg and up: form on the left, reviews on the right. */}
       <div className="flex flex-col items-center gap-10 lg:flex-row lg:items-start lg:gap-16">
         {/* Add review */}
         <section className="w-full max-w-xl lg:sticky lg:top-6 lg:w-2/5">
           <ReviewForm
             hikeId={hikeId}
-            hikeTitle={hikeTitle}
             onSubmitted={fetchReviews}
           />
         </section>
@@ -180,8 +178,6 @@ function splitTitle(title: string, max = 35): string[] {
         </section>
       </div>
       </div>
-
-      <Footer />
     </main>
   );
 }

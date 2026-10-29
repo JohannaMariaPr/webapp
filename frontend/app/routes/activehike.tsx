@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { Link, useParams } from "react-router";
+import { Link, useNavigate, useParams } from "react-router";
 import type { Route } from "./+types/activehike";
-import Header from "../components/Header";
 
 import mapImage from "../../images/mapActive.png";
 import restaurantImage from "../../images/restaurant.jpg";
@@ -128,6 +127,7 @@ function Pin({ kind }: { kind: Kind }) {
 
 export default function ActiveHike({ loaderData }: Route.ComponentProps) {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
 
   // filter chips are on (none = show every pin)
   const [active, setActive] = useState<Kind[]>([]);
@@ -144,10 +144,25 @@ export default function ActiveHike({ loaderData }: Route.ComponentProps) {
 
   return (
     <main className="mx-auto w-full max-w-xl bg-background text-ink">
-      <Header
-        title={loaderData.title}
-        description={loaderData.description_short}
-      />
+      {/* Title */}
+      <header className="px-6 pb-4 pt-5">
+        <button
+          type="button"
+          onClick={() => navigate(-1)}
+          aria-label="Back"
+          className="mb-3 grid size-8 place-items-center rounded-full focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-[#879fd0]"
+        >
+          <svg viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+          </svg>
+        </button>
+        <h1 className="text-[clamp(1.75rem,8vw,2.8125rem)] font-bold uppercase leading-tight">
+          {loaderData.title}
+        </h1>
+        <p className="mt-1 max-w-md text-[clamp(1rem,3.8vw,1.3125rem)] leading-snug">
+          {loaderData.description_short}
+        </p>
+      </header>
 
       {/* map picture with pins on top */}
       <section className="relative h-[34rem] overflow-hidden bg-[#c9e6d8]" aria-label="Map of the trail">
@@ -205,7 +220,7 @@ export default function ActiveHike({ loaderData }: Route.ComponentProps) {
     aria-hidden="true"
   />
   <Link
-    to={`/View360?hike=${id}`}
+    to="/View360"
     aria-label="360 view"
     className="relative grid size-16 place-items-center rounded-full bg-background text-base font-bold text-ink shadow-md focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-[#879fd0]"
   >

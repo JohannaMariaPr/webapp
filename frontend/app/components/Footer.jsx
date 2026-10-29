@@ -22,7 +22,7 @@ const groups = [
   },
   {
     title: "About",
-    links: [{ label: "About LYSTT", to: "/" }],
+    links: [{ label: "About LYSTTi", to: "/" }],
   },
 ];
 

@@ -8,6 +8,7 @@ import {
 import useSavedHike from "~/hooks/useSavedHike";
 import { BookmarkIcon } from "./hikedescription";
 
+// Review data used to calculate the average hike rating, painting and hike data shown inside the card
 interface Review {
   "Star rating": string;
 }
@@ -32,6 +33,9 @@ interface Hike {
   Reviews?: Review[];
 }
 
+// Props used by the reusable hike card
+// onClose is only used when the card appears as an overlay on the Map
+// onUnsave is used on the Saved page so the card disappears immediatel
 interface HikeCardProps {
   hike: Hike;
   painting: Painting;
@@ -44,11 +48,9 @@ export default function HikeCard({
   painting,
   onClose, onUnsave
 }: HikeCardProps) {
-  // ----------------------------------------
+ 
   // RATING
-  // Converts "4/5" → 4
-  // ----------------------------------------
-
+  // Convert review values such as "4/5" into the number 4
   function parseRating(rating: string) {
     const value = Number(
       rating.split("/")[0].trim()
@@ -57,6 +59,7 @@ export default function HikeCard({
     return Number.isNaN(value) ? 0 : value;
   }
 
+  // Convert all valid review ratings into numbers
   const ratings =
     hike.Reviews
       ?.map((review) =>
@@ -64,26 +67,27 @@ export default function HikeCard({
       )
       .filter((rating) => rating > 0) ?? [];
 
+  // Calculate the average rating for the hike - If there are no reviews, the rating defaults to 0
   const averageRating =
     ratings.length > 0
       ? ratings.reduce(
-          (sum, rating) => sum + rating,
-          0
-        ) / ratings.length
+        (sum, rating) => sum + rating,
+        0
+      ) / ratings.length
       : 0;
 
-  // ----------------------------------------
   // DURATION
-  // ----------------------------------------
-
+  // Format the duration stored in minutes into a readable value
   function formatDuration() {
     const min = hike.duration_min;
     const max = hike.duration_max;
 
+    // No duration can be shown if the minimum value is missing
     if (min == null) {
       return null;
     }
 
+    // If only one duration exists, show a single value
     if (max == null || max === min) {
       if (min < 60) {
         return `${min} min`;
@@ -96,6 +100,7 @@ export default function HikeCard({
         : `${hours.toFixed(1)} h`;
     }
 
+    // Convert the minimum and maximum duration into hours
     const minHours = min / 60;
     const maxHours = max / 60;
 
@@ -114,21 +119,25 @@ export default function HikeCard({
 
   const duration = formatDuration();
 
+  // SAVED HIKE
+  // Get the current saved state and save/unsave function for this specific hike from the shared custom hook
   const {
-  isSaved,
-  isLoading,
-  toggleSaved,
-} = useSavedHike(hike.id);
+    isSaved,
+    isLoading,
+    toggleSaved,
+  } = useSavedHike(hike.id);
 
-async function handleToggleSaved() {
-  const wasSaved = isSaved;
+  // Toggle the saved state in Supabase
+  // If the hike is removed from the Saved page, notify the parent so the card can disappear immediately
+  async function handleToggleSaved() {
+    const wasSaved = isSaved;
 
-  await toggleSaved();
+    await toggleSaved();
 
-  if (wasSaved && onUnsave) {
-    onUnsave(hike.id);
+    if (wasSaved && onUnsave) {
+      onUnsave(hike.id);
+    }
   }
-}
 
   return (
     <article
@@ -171,13 +180,13 @@ async function handleToggleSaved() {
           ×
         </button>
       )}
-{/* Save button */}
+      {/* Save button - saves or removes the hike from supabase */}
       <button
-  type="button"
-  onClick={handleToggleSaved}
-  disabled={isLoading}
-  aria-label={isSaved ? "Remove saved hike" : "Save hike"}
-  className="
+        type="button"
+        onClick={handleToggleSaved}
+        disabled={isLoading}
+        aria-label={isSaved ? "Remove saved hike" : "Save hike"}
+        className="
     absolute
     left-4
     top-4
@@ -185,10 +194,10 @@ async function handleToggleSaved() {
     hover:scale-105
     disabled:opacity-50
   "
->
-  <BookmarkIcon filled={isSaved} />
-</button>
-      {/* Top images */}
+      >
+        <BookmarkIcon filled={isSaved} />
+      </button>
+      {/* Top section with painting image and route image */}
       <div className="grid grid-cols-2">
         {/* Painting image */}
         <div className="aspect-square overflow-hidden bg-[#E8E2DC]">
@@ -199,6 +208,7 @@ async function handleToggleSaved() {
               className="h-full w-full object-cover"
             />
           ) : (
+            // Show an icon if no painting image exists
             <div className="flex h-full items-center justify-center">
               <ImageIcon size={28} />
             </div>
@@ -206,24 +216,25 @@ async function handleToggleSaved() {
         </div>
 
         {/* Route image */}
-<div className="aspect-square overflow-hidden bg-[#E8E2DC]">
-  {hike.route_picture ? (
-    <img
-      src={hike.route_picture}
-      alt={`${hike.title} route`}
-      className="h-full w-full object-cover"
-    />
-  ) : (
-    <div className="flex h-full items-center justify-center">
-      <MapPin size={30} />
-    </div>
-  )}
-</div>
+        <div className="aspect-square overflow-hidden bg-[#E8E2DC]">
+          {hike.route_picture ? (
+            <img
+              src={hike.route_picture}
+              alt={`${hike.title} route`}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            // Show a map-pin icon if no route image exists
+            <div className="flex h-full items-center justify-center">
+              <MapPin size={30} />
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Content */}
+      {/* Main card content */}
       <div className="flex flex-1 flex-col p-4">
-        {/* Rating */}
+        {/* Average review rating */}
         <div className="mb-3 flex items-center gap-1 text-[#FFB000]">
           {[1, 2, 3, 4, 5].map((star) => (
             <span
@@ -323,13 +334,14 @@ async function handleToggleSaved() {
               className="mt-0.5 shrink-0"
             />
 
+            {/* Artist pages are not implemented yet, so this currently links to 404 */}
             <Link to={`/404/`} className="underline">
               {painting.artist}
             </Link>
           </div>
         )}
 
-        {/* Explore button */}
+        {/* Link to hike detail page */}
         <div className="mt-auto flex justify-end pt-2">
           <Link
             to={`/hikedetails/${hike.id}`}

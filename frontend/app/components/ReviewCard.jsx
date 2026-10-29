@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 function parseStars(rating) {
-  // "4/5" -> 4
+  // round up
   const n = parseInt(rating ?? "", 10);
   return Number.isNaN(n) ? 0 : Math.max(0, Math.min(5, n));
 }
@@ -13,7 +13,7 @@ export default function ReviewCard({ review }) {
   const [expanded, setExpanded] = useState(false);
   const [canExpand, setCanExpand] = useState(false);
 
-  // Show the button only if the text is actually cut off by line-clamp
+  // show more button only if the text is actually cut off
   useEffect(() => {
     const el = textRef.current;
     if (!el) return;
@@ -29,7 +29,7 @@ export default function ReviewCard({ review }) {
   }, [review, expanded]);
 
   return (
-    // Always horizontal: image on the left, text on the right (mobile + desktop)
+    // layout: image on the left, text on the right (mobile + desktop)
     <article className="flex items-start gap-4 border-b-2 border-ink py-5 text-left text-ink sm:gap-6">
       {review.Picture && (
         <img

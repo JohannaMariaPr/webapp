@@ -3,7 +3,8 @@ import type { Route } from "./+types/hikedetails";
 import { useState } from "react";
 import Slider from "../components/Slider";
 import HikeDescription from "../components/hikedescription";
-import SearchBar from "../components/SearchBar";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 import MapPart from "../components/mappart";
 import HikeReview from "../components/hikereview";
 import ArtistPart from "../components/artistpart";
@@ -165,10 +166,19 @@ export default function HikeDetail({ loaderData }: Route.ComponentProps) {
 } = useSavedHike(loaderData.id);
 
   return (
-    <div className="min-h-screen bg-background p-8 font-body">
-      <header className="flex justify-center p-6">
-        <SearchBar value={searchValue} onChange={setSearchValue} />
-      </header>
+    <div className="min-h-screen bg-background font-body">
+      {/* Static text as in the design, search bar without filter button */}
+      <Header
+        title="Hike"
+        description="A scenic trail filled with natural beauty and peaceful views."
+        showSearch
+        showFilter={false}
+        searchValue={searchValue}
+        onSearchChange={setSearchValue}
+      />
+
+      {/* The header has its own padding, so the rest keeps the old p-8 here */}
+      <div className="p-8">
 
       <Slider
         beforeImage="/Sliderimages/before.webp"
@@ -215,6 +225,9 @@ export default function HikeDetail({ loaderData }: Route.ComponentProps) {
           difficulty={loaderData.difficulty}
         />
       </div>
+      </div>
+
+      <Footer />
     </div>
   );
 }

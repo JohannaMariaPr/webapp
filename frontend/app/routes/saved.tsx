@@ -5,6 +5,8 @@ import DesktopFilters from "~/components/filters/DesktopFilters";
 import MobileFilters from "~/components/filters/MobileFilters";
 import ActiveFilterTags from "~/components/filters/ActiveFilterTags";
 import { Link } from "react-router";
+import Header from "~/components/Header";
+import Footer from "~/components/Footer";
 
 // Supabase connection values from the env file
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -120,6 +122,14 @@ export default function Saved() {
     loadSavedHikes();
   }, []);
 
+  // Same header on every state of the page (loading, error, list)
+  const pageHeader = (
+    <Header
+      title="Saved hikes"
+      description="View and manage all the hikes you've saved for your next adventure."
+    />
+  );
+
   // GET HIKES FFROM SAVED ROWS
   // Extract the actual hike objects from the saved_hikes rows
   // Null values are removed so the result only contains valid hikes
@@ -226,41 +236,40 @@ export default function Saved() {
   // LOADING / ERROR STATES
   if (loading) {
     return (
-      <main className="p-6">
-        <h1 className="mb-4 text-3xl font-bold">
-          SAVED HIKES
-        </h1>
+      <main>
+        {pageHeader}
 
-        <p>Loading saved hikes...</p>
+        <div className="p-6">
+          <p>Loading saved hikes...</p>
+        </div>
+
+        <Footer />
       </main>
     );
   }
 
   if (error) {
     return (
-      <main className="p-6">
-        <h1 className="mb-4 text-3xl font-bold">
-          SAVED HIKES
-        </h1>
+      <main>
+        {pageHeader}
 
-        <p className="text-red-600">
-          {error}
-        </p>
+        <div className="p-6">
+          <p className="text-red-600">
+            {error}
+          </p>
+        </div>
+
+        <Footer />
       </main>
     );
   }
 
   return (
     <main>
-      {/* Page heading, filters and search */}
-      <div className="p-6">
-        <h1 className="mb-2 text-3xl font-bold">
-          SAVED HIKES
-        </h1>
+      {pageHeader}
 
-        <p className="mb-4">
-          Your saved hikes are collected here for easy access.
-        </p>
+      {/* Search and filters (the header has its own padding, so only the side padding is needed here) */}
+      <div className="px-6 pb-6">
 
         {/* Desktop filters */}
         <div className="mb-2 hidden md:block">
@@ -418,6 +427,8 @@ export default function Saved() {
           )}
         </>
       )}
+
+      <Footer />
     </main>
   );
 }

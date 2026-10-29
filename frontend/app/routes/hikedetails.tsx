@@ -63,6 +63,7 @@ function StartHikeButton({
   const navigate = useNavigate();
 
   const handleStartHike = () => {
+    // Pass the hike information to the next screen in the URL.
     const params = new URLSearchParams({
       name,
       distance: `${distanceKm} km`,
@@ -72,6 +73,7 @@ function StartHikeButton({
     if (hikeId) {
       params.set("id", hikeId);
     }
+    // Use the onboarding page on mobile and the device page on desktop.
     const destination =
       window.innerWidth <= 768 ? "/hikeonboarding" : "/sendtodevice";
 
@@ -90,6 +92,7 @@ function StartHikeButton({
 }
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
+  // Get the Supabase URL and key.
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
   const supabaseKey = import.meta.env.VITE_SUPABASE_KEY;
 
@@ -97,6 +100,7 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
     throw new Response("Hike details are not configured", { status: 500 });
   }
 
+  // Load the selected hike and its related paintings.
   const response = await fetch(
     `${supabaseUrl}/rest/v1/hikes?id=eq.${encodeURIComponent(params.id)}&select=title,location,distance_km,duration_min,duration_max,difficulty,description_short,description_long,paintings(*)`,
     {
@@ -118,6 +122,7 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
     throw new Response("Hike not found", { status: 404 });
   }
 
+  // Load all reviews for this hike.
   const reviewsResponse = await fetch(
     `${supabaseUrl}/rest/v1/Reviews?hike_id=eq.${encodeURIComponent(params.id)}&select=*&order=id.asc`,
     {
@@ -133,6 +138,7 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   }
 
   const reviews = (await reviewsResponse.json()) as ReviewRow[];
+  // Calculate the average rating, or use zero when there are no reviews.
   const rating = reviews.length
     ? reviews.reduce((total, review) => {
         return total + Number.parseInt(review["Star rating"], 10);
@@ -164,8 +170,11 @@ export default function HikeDetail({ loaderData }: Route.ComponentProps) {
   toggleSaved,
 } = useSavedHike(loaderData.id);
 
+{/*This is the part where i actually build the page and add the components to it.*/}
+
   return (
     <div className="min-h-screen bg-background p-8 font-body">
+      {/* Search and image slider at the top of the hike page. */} 
       <header className="flex justify-center p-6">
         <SearchBar value={searchValue} onChange={setSearchValue} />
       </header>
@@ -192,7 +201,9 @@ export default function HikeDetail({ loaderData }: Route.ComponentProps) {
           difficulty={loaderData.difficulty}
         />
       </div>
-       <MapPart />
+      {/* Map, nearby wonders, reviews, and artwork sections. */}
+      <MapPart />
+      {/* Show the wonders along the way image, we used it in figma and to focus on building everything else we just used and image here. */}
       <img
       src="/wonders/wonders%20picture.png"
       alt="Wonders along the way"

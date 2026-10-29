@@ -1,10 +1,12 @@
 import { useState } from "react";
 
 export default function MapPart() {
+  // Track whether the full map is open.
   const [isMapOpen, setIsMapOpen] = useState(false);
 
   return (
     <section className="grid grid-cols-2 items-center gap-3 p-3 sm:gap-8 sm:p-6">
+      {/* Show the map section title and short description. */}
       <div className="space-y-4">
         <h1 className="text-2xl font-bold text-[#673C33]">
           Follow the Trail
@@ -22,6 +24,7 @@ export default function MapPart() {
         </button>
       </div>
 
+      {/* Open the full map when the preview is clicked. */}
       <button
         type="button"
         onClick={() => setIsMapOpen(true)}
@@ -44,6 +47,7 @@ export default function MapPart() {
         </span>
       </button>
 
+      {/* Show the full map in a popup when it is open. */}
       {isMapOpen && (
         <div
           role="dialog"
@@ -60,6 +64,8 @@ export default function MapPart() {
           >
             &times;
           </button>
+
+          //Map image that can be clicked to close the popup, but clicking on the image itself does not close it.
 
           <img
             src="/Mappart/map.png"

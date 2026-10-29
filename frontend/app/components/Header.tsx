@@ -1,5 +1,17 @@
 import { Link, useNavigate } from "react-router";
+import type { ReactNode } from "react";
 import SearchBar from "./SearchBar";
+
+type HeaderProps = {
+  title: ReactNode;
+  description: string;
+  showSearch?: boolean;
+  showFilter?: boolean;
+  searchValue?: string;
+  onSearchChange?: (value: string) => void;
+  showProfile?: boolean;
+  className?: string;
+};
 
 // header title + description + search bar
 
@@ -12,7 +24,7 @@ export default function Header({
   onSearchChange = () => {},
   showProfile = true,
   className = "",
-}) {
+}: HeaderProps) {
   const navigate = useNavigate();
 
   return (

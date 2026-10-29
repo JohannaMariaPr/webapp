@@ -1,16 +1,35 @@
-export default function ArtistPart({ paintings = [] }) {
+type Painting = {
+    id?: string | number;
+    title?: string;
+    artist?: string;
+    location?: string;
+    description?: string;
+    artist_description?: string;
+    image?: string;
+    picture?: string;
+};
+
+type ArtistPartProps = {
+    paintings?: Painting[];
+};
+
+export default function ArtistPart({ paintings = [] }: ArtistPartProps) {
+    // Use the first painting for the main artist information.
     const artist = paintings[0];
 
     return (
         <section className="p-3 sm:p-6">
+            {/* Section heading. */}
             <h1 className="text-xs text-[#673C33]">
             More about...
             </h1>
 
+            {/* Show a message when there are no paintings. */}
             {paintings.length === 0 ? (
                 <p className="mt-3 text-xs text-[#673C33]">No painting information available.</p>
             ) : (
                 <div className="mt-3 space-y-3">
+                    {/* Show the artist name when there is one connected to the hike. */}
                     {artist?.artist && (
                         <h2 className="flex items-center justify-between gap-4 text-xl font-semibold text-[#673C33]">
                             <span className="flex items-center gap-2">
@@ -28,6 +47,7 @@ export default function ArtistPart({ paintings = [] }) {
                         </h2>
                     )}
 
+                    {/* Show each painting image and its location.so that people can see that this hike you can see different paintings. */}
                     <div className="flex flex-wrap gap-3">
                     {paintings.map((painting) => {
                         const image = painting.image || painting.picture;
@@ -55,6 +75,7 @@ export default function ArtistPart({ paintings = [] }) {
                     })}
                     </div>
 
+                    {/* Show the artist description below the paintings. */}
                     <p className="w-full text-sm leading-6 text-[#673C33] sm:text-base">
                         {artist?.artist_description || artist?.description || "No artist description available."}
                     </p>

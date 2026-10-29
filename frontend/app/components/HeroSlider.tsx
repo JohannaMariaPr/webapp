@@ -1,11 +1,26 @@
 import { useEffect, useState } from "react";
 
+type HeroImage = {
+  src: string;
+  alt?: string;
+};
+
+type HeroSliderProps = {
+  images: HeroImage[];
+  interval?: number;
+  className?: string;
+  children?: React.ReactNode;
+};
+
+// images: [{ src: "https://...", alt: "optional description" }, ...]
+// interval: milliseconds each image stays on screen
+// children: content shown over the images
 export default function HeroSlider({
   images,
   interval = 3000,
   className = "",
-  children, // whatever should sit on top of the images
-}) {
+  children,
+}: HeroSliderProps) {
   const count = images.length;
 
   // index === count (showing the cloned first slide...see handleTransitionEnd)
@@ -19,7 +34,7 @@ export default function HeroSlider({
     const query = window.matchMedia("(prefers-reduced-motion: reduce)");
     setReduceMotion(query.matches);
 
-    const onChange = (e) => setReduceMotion(e.matches);
+    const onChange = (e: MediaQueryListEvent) => setReduceMotion(e.matches);
     query.addEventListener("change", onChange);
     return () => query.removeEventListener("change", onChange);
   }, []);
@@ -36,9 +51,9 @@ export default function HeroSlider({
     return () => clearInterval(id);
   }, [count, interval, paused, reduceMotion]);
 
-  // after sliding onto the clone of the first image, jump back to the real first as components on figma
-  
-  function handleTransitionEnd(e) {
+  // After sliding onto the clone of the first image, jump back to the real first
+  // image without animation, so the slider loops forward forever.
+  function handleTransitionEnd(e: React.TransitionEvent<HTMLDivElement>) {
     if (e.target !== e.currentTarget) return;
     if (index === count) {
       setAnimate(false);

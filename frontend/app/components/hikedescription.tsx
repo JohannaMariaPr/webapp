@@ -19,6 +19,7 @@ type HikeDescriptionProps = {
   onToggleSaved: () => void;
 };
 
+// Show the hike rating as stars.
 function Stars({ rating }: { rating: number }) {
   return (
     <span aria-label={`${rating} out of 5 stars`} style={{ color: "#FFC100", fontSize: "2rem" }}>
@@ -27,12 +28,14 @@ function Stars({ rating }: { rating: number }) {
   );
 }
 
+// Make text between ** marks bold.
 function renderDescription(text: string) {
   return text.split("**").map((part, i) =>
     i % 2 === 1 ? <strong key={i}>{part}</strong> : part
   );
 }
 
+// Show the bookmark icon for saving a hike.
 export function BookmarkIcon({ filled }: { filled: boolean }) {
   return (
     <svg
@@ -58,13 +61,7 @@ export default function HikeDescription({
   onToggleSaved,
 }: HikeDescriptionProps) {
   return (
-    <section
-      style={{
-        background: "#f3eee8",
-        color: "#673C33",
-        padding: "1.5rem",
-      }}
-    >
+    <section style={{ background: "#f3eee8", color: "#673C33", padding: "1.5rem" }}>
       <header style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
         <h1
           style={{
@@ -94,8 +91,10 @@ export default function HikeDescription({
 </button>
       </header>
 
+      {/* Show the distance, time, and difficulty. */}
       <p>{hike.distanceKm} km • {hike.duration} • {hike.difficulty}</p>
 
+      {/* Show the rating and link to leave a review.the same review form that you can fill out when you get to the bottom where the reviews are. */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <Stars rating={hike.rating} />
         <Link
@@ -106,6 +105,7 @@ export default function HikeDescription({
         </Link>
       </div>
 
+      {/* Show the short headline and full description. */}
       <h2 style={{ fontWeight: "bold", marginBottom: "1rem" }}>{hike.headline}</h2>
       <p style={{ marginTop: 0 }}>{renderDescription(hike.description)}</p>
     </section>

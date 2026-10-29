@@ -133,7 +133,7 @@ export default function DesktopFilters({
 
       {/* Difficulty overlay */}
       {openFilter === "difficulty" && (
-        <div className="absolute left-72 top-8 z-30 w-[260px] border border-[#704238]/20 bg-[#FFFDF9] p-4 shadow-md">
+        <div className="absolute left-72 top-8 z-30 w-65 border border-[#704238]/20 bg-[#FFFDF9] p-4 shadow-md">
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-lg text-[#704238]">
               Difficulty

@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link, useSearchParams } from "react-router";
 import { ReactPhotoSphereViewer } from "react-photo-sphere-viewer";
-
 
 const panoramas = [
   "/360panoramas/Monsklint.png",
@@ -40,8 +39,11 @@ function RotatePhoneIcon() {
 }
 
 export default function View360() {
+  // All hooks live INSIDE the component
   const [showHint, setShowHint] = useState(true);
   const [index, setIndex] = useState(0);
+  const [searchParams] = useSearchParams();
+  const hikeId = searchParams.get("hike"); // comes from /View360?hike=4
 
   const prev = () => setIndex((i) => (i - 1 + panoramas.length) % panoramas.length);
   const next = () => setIndex((i) => (i + 1) % panoramas.length);
@@ -86,8 +88,9 @@ export default function View360() {
           </button>
         </div>
 
+        {/* Back to the active hike it was opened from (or All Hikes if opened directly) */}
         <Link
-          to="/activehike"
+          to={hikeId ? `/activehike/${hikeId}` : "/allhikes"}
           className="rounded-full bg-[#f3eee8] px-5 py-2 text-sm font-bold uppercase text-[#6b3f2e] shadow-md"
         >
           Back to map
@@ -96,5 +99,3 @@ export default function View360() {
     </section>
   );
 }
-
-

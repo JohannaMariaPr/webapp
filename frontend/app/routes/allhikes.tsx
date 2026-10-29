@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import HikeCard from "../components/HikeCard";
-import SearchBar from "../components/SearchBar";
+import SearchBar from "~/components/SearchBar";
 import DesktopFilters from "../components/filters/DesktopFilters";
 import MobileFilters from "../components/filters/MobileFilters";
 import ActiveFilterTags from "../components/filters/ActiveFilterTags";
@@ -11,23 +11,30 @@ const supabaseKey = import.meta.env.VITE_SUPABASE_KEY;
 
 interface Painting {
   id: string | number;
-  title?: string;
+  title: string;
   artist?: string;
+  picture?: string;
   location?: string;
   hike_id?: string | number;
+  featured?: boolean;
+}
+
+interface Review {
+  "Star rating": string;
 }
 
 interface Hike {
   id: string | number;
   title?: string;
   location?: string;
-
+  description_short?: string;
   distance_km?: number;
   duration_min?: number;
   duration_max?: number;
   difficulty?: string;
 
   paintings?: Painting[];
+  Reviews?: Review[];
 
   [key: string]: unknown;
 }
@@ -44,7 +51,7 @@ export default function AllHikes() {
     async function fetchHikes() {
       try {
         const response = await fetch(
-          `${supabaseUrl}/rest/v1/hikes?select=*,paintings(*)`,
+          `${supabaseUrl}/rest/v1/hikes?select=*,paintings(*),Reviews("Star rating")`,
           {
             headers: {
               apikey: supabaseKey,
@@ -241,9 +248,24 @@ export default function AllHikes() {
 
     {/* Hike cards */}
     <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-      {filteredHikes.map((hike) => (
-        <HikeCard key={hike.id} hike={hike} />
-      ))}
+      {filteredHikes.map((hike) => {
+  const featuredPainting =
+    hike.paintings?.find(
+      (painting) => painting.featured
+    ) ?? hike.paintings?.[0];
+
+  if (!featuredPainting) {
+    return null;
+  }
+
+  return (
+    <HikeCard
+      key={hike.id}
+      hike={hike}
+      painting={featuredPainting}
+    />
+  );
+})}
     </div>
 
     {/* No results */}

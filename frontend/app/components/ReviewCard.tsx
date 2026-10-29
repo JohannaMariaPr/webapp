@@ -24,7 +24,7 @@ export default function ReviewCard({ review }: ReviewCardProps) {
   const [expanded, setExpanded] = useState(false);
   const [canExpand, setCanExpand] = useState(false);
 
-  // Show the button only if the text is actually cut off by line-clamp
+  // show more button only if the text is actually cut off
   useEffect(() => {
     const element = textRef.current;
     if (!element) return;
@@ -40,7 +40,7 @@ export default function ReviewCard({ review }: ReviewCardProps) {
   }, [review, expanded]);
 
   return (
-    // Always horizontal: image on the left, text on the right (mobile + desktop)
+    // layout: image on the left, text on the right (mobile + desktop)
     <article className="flex items-start gap-4 border-b-2 border-ink py-5 text-left text-ink sm:gap-6">
       {review.Picture && (
         <img

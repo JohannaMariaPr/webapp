@@ -740,8 +740,8 @@
   }
 }
 
-/* Web (761px and up): sidebar 25% smaller, 430px -> 322px, everything inside scaled x0.75.
-   .app-content is flex: 1, so the page next to the sidebar still fills the rest of the screen. */
+/* Web (761px and up): sidebar 25% smaller
+   .app-content is flex so the page next to the sidebar still fills the rest of the screen. */
 @media (min-width: 761px) {
   .sidebar {
     width: min(100%, 322px);

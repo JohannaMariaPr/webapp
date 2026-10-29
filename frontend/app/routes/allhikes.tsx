@@ -5,10 +5,14 @@ import DesktopFilters from "../components/filters/DesktopFilters";
 import MobileFilters from "../components/filters/MobileFilters";
 import ActiveFilterTags from "../components/filters/ActiveFilterTags";
 import MobileViewSwitch from "~/components/MobileViewSwitch";
+import Header from "~/components/Header";
+import Footer from "~/components/Footer";
 
+// Supabase connection values from the environment file
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_KEY;
 
+// Review data used to calculate the average hike rating, painting and hike data shown inside the card
 interface Painting {
   id: string | number;
   title: string;
@@ -41,16 +45,22 @@ interface Hike {
 }
 
 export default function AllHikes() {
+  // All hikes fetched from Supabase
   const [hikes, setHikes] = useState<Hike[]>([]);
+  // Search input value
   const [search, setSearch] = useState("");
+  // Stores an error message if the Supabase request fails
   const [error, setError] = useState<string | null>(null);
+  // Active filter values, null means that no filter is selected for that category
   const [distance, setDistance] = useState<string | null>(null);
   const [duration, setDuration] = useState<string | null>(null);
   const [difficulty, setDifficulty] = useState<string | null>(null);
 
+  // FETCH HIKES
   useEffect(() => {
     async function fetchHikes() {
       try {
+        // Fetch hikes together with their paintings and review ratings
         const response = await fetch(
           `${supabaseUrl}/rest/v1/hikes?select=*,paintings(*),Reviews("Star rating")`,
           {
@@ -61,11 +71,13 @@ export default function AllHikes() {
           }
         );
 
+        // Stop if Supabase does not return a successful response
         if (!response.ok) {
           throw new Error(`Failed to fetch hikes: ${response.status}`);
         }
 
         const data = await response.json();
+        // Store the returned hikes in state
         setHikes(data);
       } catch (err) {
         setError(
@@ -74,13 +86,16 @@ export default function AllHikes() {
       }
     }
 
+    // Load the hikes once when the page first mounts
     fetchHikes();
   }, []);
 
+  // FILTER HIKES
+  // Create the list of hikes that match the current search query and all selected filters
   const filteredHikes = hikes.filter((hike) => {
     const query = search.trim().toLowerCase();
 
-    // SEARCH
+    // SEARCH matches if the search term appears in the hike title, location, painting title or artist name
     const matchesSearch =
       !query ||
       hike.title?.toLowerCase().includes(query) ||
@@ -93,6 +108,7 @@ export default function AllHikes() {
       );
 
     // DISTANCE
+    // Start with true so all hikes are shown when no distance filter is selected
     let matchesDistance = true;
 
     if (distance) {
@@ -157,12 +173,13 @@ export default function AllHikes() {
     }
 
     // DIFFICULTY
+    // Compare the selected difficulty with the hike value
     const matchesDifficulty =
       !difficulty ||
       hike.difficulty?.toLowerCase() ===
       difficulty.toLowerCase();
 
-    // HIKE HAS TO MATCH ALL ACTIVE FILTERS
+    // Hike has to match search and all active filters
     return (
       Boolean(matchesSearch) &&
       matchesDistance &&
@@ -171,114 +188,119 @@ export default function AllHikes() {
     );
   });
 
+  // Show the error message if loading from Supabase failed
   if (error) {
     return <p>{error}</p>;
   }
 
   return (
-  <main className="p-6">
-    <h1 className="mb-2 text-3xl font-bold">
-      EXPLORE ALL HIKES
-    </h1>
-
-    <p className="mb-4">
-      Discover every hike, with scenic details and paintings inspired by each trail.
-    </p>
-
-    {/* Desktop filters */}
-    <div className="mb-2 hidden md:block">
-      <DesktopFilters
-        distance={distance}
-        setDistance={setDistance}
-        duration={duration}
-        setDuration={setDuration}
-        difficulty={difficulty}
-        setDifficulty={setDifficulty}
+    <main>
+      <Header
+        title="Explore all hikes"
+        description="Discover every hike, with scenic details and paintings inspired by each trail."
       />
-    </div>
 
-    {/* Desktop search + active filter tags */}
-    <div className="hidden md:flex md:items-center md:gap-3">
-      <div className="w-full max-w-md">
-        <SearchBar
-          value={search}
-          onChange={setSearch}
+      {/* The header has its own padding, so the rest gets its own side padding here */}
+      <div className="px-6 pb-6">
+
+      {/* Desktop filters */}
+      <div className="mb-2 hidden md:block">
+        <DesktopFilters
+          distance={distance}
+          setDistance={setDistance}
+          duration={duration}
+          setDuration={setDuration}
+          difficulty={difficulty}
+          setDifficulty={setDifficulty}
         />
       </div>
 
-      <ActiveFilterTags
-        distance={distance}
-        setDistance={setDistance}
-        duration={duration}
-        setDuration={setDuration}
-        difficulty={difficulty}
-        setDifficulty={setDifficulty}
-      />
-    </div>
+      {/* Desktop search + active filter tags */}
+      <div className="hidden md:flex md:items-center md:gap-3">
+        <div className="w-full max-w-md">
+          <SearchBar
+            value={search}
+            onChange={setSearch}
+          />
+        </div>
 
-    {/* Mobile search + filter button */}
-    <div className="flex items-center gap-3 md:hidden">
-      <div className="flex-1">
-        <SearchBar
-          value={search}
-          onChange={setSearch}
+        <ActiveFilterTags
+          distance={distance}
+          setDistance={setDistance}
+          duration={duration}
+          setDuration={setDuration}
+          difficulty={difficulty}
+          setDifficulty={setDifficulty}
         />
       </div>
 
-      <MobileFilters
-        distance={distance}
-        setDistance={setDistance}
-        duration={duration}
-        setDuration={setDuration}
-        difficulty={difficulty}
-        setDifficulty={setDifficulty}
-      />
-    </div>
+      {/* Mobile search + filter button */}
+      <div className="flex items-center gap-3 md:hidden">
+        <div className="flex-1">
+          <SearchBar
+            value={search}
+            onChange={setSearch}
+          />
+        </div>
 
-    {/* Mobile active filter tags */}
-    <div className="mt-2 md:hidden">
-      <ActiveFilterTags
-        distance={distance}
-        setDistance={setDistance}
-        duration={duration}
-        setDuration={setDuration}
-        difficulty={difficulty}
-        setDifficulty={setDifficulty}
-      />
-    </div>
+        <MobileFilters
+          distance={distance}
+          setDistance={setDistance}
+          duration={duration}
+          setDuration={setDuration}
+          difficulty={difficulty}
+          setDifficulty={setDifficulty}
+        />
+      </div>
 
-    {/* Hike cards */}
-    <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-      {filteredHikes.map((hike) => {
-  const featuredPainting =
-    hike.paintings?.find(
-      (painting) => painting.featured
-    ) ?? hike.paintings?.[0];
+      {/* Mobile active filter tags */}
+      <div className="mt-2 md:hidden">
+        <ActiveFilterTags
+          distance={distance}
+          setDistance={setDistance}
+          duration={duration}
+          setDuration={setDuration}
+          difficulty={difficulty}
+          setDifficulty={setDifficulty}
+        />
+      </div>
 
-  if (!featuredPainting) {
-    return null;
-  }
+      {/* Grid containing all hikes that match the active filters */}
+      <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {filteredHikes.map((hike) => {
+          // Use the painting marked as featured. If none is featured, fall back to the first painting
+          const featuredPainting =
+            hike.paintings?.find(
+              (painting) => painting.featured
+            ) ?? hike.paintings?.[0];
 
-  return (
-    <HikeCard
-      key={hike.id}
-      hike={hike}
-      painting={featuredPainting}
-    />
-  );
-})}
-    </div>
+          // A card cannot be displayed without a painting
+          if (!featuredPainting) {
+            return null;
+          }
 
-    {/* No results */}
-    {filteredHikes.length === 0 && (
-      <p className="mt-6">
-        No hikes found.
-      </p>
-    )}
+          return (
+            <HikeCard
+              key={hike.id}
+              hike={hike}
+              painting={featuredPainting}
+            />
+          );
+        })}
+      </div>
 
+      {/* Message shown when the search or filters return no hikes */}
+      {filteredHikes.length === 0 && (
+        <p className="mt-6">
+          No hikes found.
+        </p>
+      )}
 
-    <MobileViewSwitch target="map" />
-    
-  </main>
+      {/* Mobile button for switching from card view to map view */}
+      <MobileViewSwitch target="map" />
+      </div>
+
+      <Footer />
+    </main>
   );
 }

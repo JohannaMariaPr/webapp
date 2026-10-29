@@ -62,7 +62,6 @@ export default function HikeDescription({
 }: HikeDescriptionProps) {
   return (
     <section style={{ background: "#f3eee8", color: "#673C33", padding: "1.5rem" }}>
-      {/* Show the hike name and save button. */}
       <header style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
         <h1
           style={{

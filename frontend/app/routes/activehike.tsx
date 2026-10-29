@@ -1,13 +1,15 @@
 import { useState } from "react";
-import { Link, useNavigate, useParams } from "react-router";
+import { Link, useParams } from "react-router";
 import type { Route } from "./+types/activehike";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 
 import mapImage from "../../images/mapActive.png";
 import restaurantImage from "../../images/restaurant.jpg";
 import fossilImage from "../../images/fossil.jpeg";
 import viewImage from "../../images/view.jpeg";
-import fossilIcon from "../../images/Vectorfosil.svg"; // the fossil pin icon
-import loadingBar from "../../images/Loadingbar.svg"; // hiker + progress bar
+import fossilIcon from "../../images/Vectorfosil.svg"; 
+import loadingBar from "../../images/Loadingbar.svg"; 
 
 // picture of map
 const MAP_IMAGE = mapImage;
@@ -79,7 +81,7 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   return hike;
 }
 
-// Small round-cornered icons, drawn inline (no extra package)
+// round-cornered icons, drawn inline
 function Glyph({ kind, className = "size-6" }: { kind: Kind; className?: string }) {
   const common = {
     viewBox: "0 0 24 24",
@@ -112,7 +114,7 @@ function Glyph({ kind, className = "size-6" }: { kind: Kind; className?: string 
   );
 }
 
-// Pin colours
+// pin colors
 function Pin({ kind }: { kind: Kind }) {
   if (kind === "fossil")
     return <img src={fossilIcon} alt="" className="size-11 drop-shadow-md" draggable={false} />;
@@ -127,9 +129,8 @@ function Pin({ kind }: { kind: Kind }) {
 
 export default function ActiveHike({ loaderData }: Route.ComponentProps) {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
 
-  // Which filter chips are switched on (none = show every pin)
+  // filter chips are on (none = show every pin)
   const [active, setActive] = useState<Kind[]>([]);
 
  
@@ -143,32 +144,18 @@ export default function ActiveHike({ loaderData }: Route.ComponentProps) {
   }
 
   return (
+    <>
     <main className="mx-auto w-full max-w-xl bg-background text-ink">
-      {/* Title */}
-      <header className="px-6 pb-4 pt-5">
-        <button
-          type="button"
-          onClick={() => navigate(-1)}
-          aria-label="Back"
-          className="mb-3 grid size-8 place-items-center rounded-full focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-[#879fd0]"
-        >
-          <svg viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M19 12H5M12 19l-7-7 7-7" />
-          </svg>
-        </button>
-        <h1 className="text-[clamp(1.75rem,8vw,2.8125rem)] font-bold uppercase leading-tight">
-          {loaderData.title}
-        </h1>
-        <p className="mt-1 max-w-md text-[clamp(1rem,3.8vw,1.3125rem)] leading-snug">
-          {loaderData.description_short}
-        </p>
-      </header>
+      <Header
+        title={loaderData.title}
+        description={loaderData.description_short}
+      />
 
-      {/* Map picture with pins on top */}
+      {/* map picture with pins on top */}
       <section className="relative h-[34rem] overflow-hidden bg-[#c9e6d8]" aria-label="Map of the trail">
         <img src={MAP_IMAGE} alt="" className="absolute inset-0 size-full object-cover" draggable={false} />
 
-        {/* Zoom and compass: for show, like the design */}
+        {/* zoom and compass are a lie cause its a picture */}
         <div className="absolute right-4 top-4 flex flex-col gap-4">
           <div className="grid overflow-hidden rounded-xl bg-white/95 shadow-md">
             <span className="grid size-10 place-items-center text-xl font-bold">+</span>
@@ -196,7 +183,7 @@ export default function ActiveHike({ loaderData }: Route.ComponentProps) {
           ) : null,
         )}
 
-        {/* Filter chips and 360 button */}
+        {/* filter chips and 360 button */}
         <div className="absolute inset-x-4 bottom-12 flex items-center gap-3">
           {filters.map((f) => (
             <button
@@ -214,13 +201,13 @@ export default function ActiveHike({ loaderData }: Route.ComponentProps) {
 
           {/* to link the 360 view button */}
           <span className="relative ml-auto grid size-16 place-items-center">
-  {/* expanding ring, behind the button */}
+  {/* expanding ring animation-ish */}
   <span
     className="pointer-events-none absolute inset-0 rounded-full bg-[#7C9DD2]/60 motion-safe:animate-ping"
     aria-hidden="true"
   />
   <Link
-    to="/View360"
+    to={`/View360?hike=${id}`}
     aria-label="360 view"
     className="relative grid size-16 place-items-center rounded-full bg-background text-base font-bold text-ink shadow-md focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-[#879fd0]"
   >
@@ -230,7 +217,7 @@ export default function ActiveHike({ loaderData }: Route.ComponentProps) {
         </div>
       </section>
 
-      {/* Bottom sheet: overlaps the map with rounded top corners */}
+      {/* bottom sheet - overlaps the map with rounded top corners */}
       <section className="relative -mt-9 rounded-t-[2.5rem] bg-background px-6 pb-4 pt-3">
         <span className="mx-auto block h-1.5 w-12 rounded-full bg-ink/15" aria-hidden="true" />
         <h2 className="mt-6 text-center text-[clamp(1.25rem,5vw,1.5rem)] font-bold uppercase">
@@ -238,7 +225,7 @@ export default function ActiveHike({ loaderData }: Route.ComponentProps) {
         </h2>
 
         <div className="relative mt-6">
-          {/* The hiker and the progress bar are one picture (Loadingbar.svg) */}
+          {/* The hiker and the progress bar are one picture */}
           <img
             src={loadingBar}
             alt="About 70% of the trail walked"
@@ -252,7 +239,7 @@ export default function ActiveHike({ loaderData }: Route.ComponentProps) {
         </div>
       </section>
 
-      {/* Stops along the way */}
+      {/* stops cards at the bottom */}
       <ul className="flex flex-col gap-3 bg-mist/10 px-3 pb-8 pt-3">
         {places.map((place) => (
           <li
@@ -277,5 +264,9 @@ export default function ActiveHike({ loaderData }: Route.ComponentProps) {
         ))}
       </ul>
     </main>
+
+    {/* Outside <main> so the footer is not limited to the narrow column */}
+    <Footer />
+    </>
   );
 }

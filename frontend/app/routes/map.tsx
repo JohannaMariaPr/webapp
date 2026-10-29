@@ -1,5 +1,4 @@
 import type { Route } from "./+types/map";
-
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   GeoJSONSource,
@@ -7,22 +6,20 @@ import {
   Marker,
   setWorkerUrl,
 } from "maplibre-gl";
-
 import "maplibre-gl/dist/maplibre-gl.css";
-
 import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
-
 import ActiveFilterTags from "~/components/filters/ActiveFilterTags";
 import MobileFilters from "~/components/filters/MobileFilters";
 import DesktopFilters from "~/components/filters/DesktopFilters";
 import SearchBar from "~/components/SearchBar";
 import MobileViewSwitch from "~/components/MobileViewSwitch";
-
 import HikeCard from "~/components/HikeCard";
+import Header from "~/components/Header";
 
+// Tells MapLibre which worker file to use & the worker handles map rendering tasks in the background
 setWorkerUrl(workerUrl);
 
-export function meta({}: Route.MetaArgs) {
+export function meta({ }: Route.MetaArgs) {
   return [
     { title: "Map" },
     {
@@ -32,9 +29,11 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
+// Supabase connection values from the environment file
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_KEY;
 
+// Painting, review and hike data from supabase
 interface Painting {
   id: string | number;
   title: string;
@@ -69,36 +68,43 @@ interface Hike {
 }
 
 export default function MapPage() {
+  // Reference to the HTML element where MapLibre renders the map
   const mapContainer = useRef<HTMLDivElement | null>(null);
+
+  // Stores the MapLibre map instance so it can be accessed and cleaned up
   const mapRef = useRef<MapLibreMap | null>(null);
 
+  // All hikes loaded from Supabase
   const [hikes, setHikes] = useState<Hike[]>([]);
 
+  // Search and filter values
   const [search, setSearch] = useState("");
   const [distance, setDistance] = useState<string | null>(null);
   const [duration, setDuration] = useState<string | null>(null);
   const [difficulty, setDifficulty] = useState<string | null>(null);
 
+  // Stores an error message if Supabase loading fails
   const [error, setError] = useState<string | null>(null);
 
+  // Painting selected by clicking a pin on the map
   const [selectedPainting, setSelectedPainting] =
     useState<Painting | null>(null);
 
-    const selectedHike = selectedPainting
-  ? hikes.find(
+  // Finds the hike connected to the selected painting and shows the correct HikeCard in the map overlay
+  const selectedHike = selectedPainting
+    ? hikes.find(
       (hike) =>
         String(hike.id) ===
         String(selectedPainting.hike_id)
     )
-  : undefined;
+    : undefined;
 
-  // --------------------------------------------------
-  // FETCH HIKES + PAINTINGS
-  // --------------------------------------------------
+  // FETCH HIKES & PAINTINGS
 
   useEffect(() => {
     async function fetchHikes() {
       try {
+        // Fetch hikes together with their paintings and review ratings
         const response = await fetch(
           `${supabaseUrl}/rest/v1/hikes?select=*,paintings(*),Reviews("Star rating")`,
           {
@@ -109,6 +115,7 @@ export default function MapPage() {
           }
         );
 
+        // Stop and show an error if Supabase does not return a successful response
         if (!response.ok) {
           const errorText = await response.text();
 
@@ -119,6 +126,7 @@ export default function MapPage() {
 
         const data = await response.json();
 
+        // Store the fetched hikes in state
         setHikes(data);
       } catch (err) {
         setError(
@@ -129,18 +137,17 @@ export default function MapPage() {
       }
     }
 
+    // Load hike data once when the page first mounts
     fetchHikes();
   }, []);
 
-  // --------------------------------------------------
   // FILTER HIKES
-  // --------------------------------------------------
-
+  // Recalculates the visible hikes only when the hike data, search term or filter values change
   const filteredHikes = useMemo(() => {
     return hikes.filter((hike) => {
       const query = search.trim().toLowerCase();
 
-      // SEARCH
+      // SEARCH matches hike title, location, painting title or artist name
       const matchesSearch =
         !query ||
         hike.title?.toLowerCase().includes(query) ||
@@ -193,6 +200,7 @@ export default function MapPage() {
         const min = hike.duration_min ?? 0;
         const max = hike.duration_max ?? min;
 
+        // Use average of min and max duration when deciding which duration category the hike belongs to
         const averageDuration =
           (min + max) / 2;
 
@@ -229,7 +237,7 @@ export default function MapPage() {
       const matchesDifficulty =
         !difficulty ||
         hike.difficulty?.toLowerCase() ===
-          difficulty.toLowerCase();
+        difficulty.toLowerCase();
 
       return (
         Boolean(matchesSearch) &&
@@ -246,10 +254,8 @@ export default function MapPage() {
     difficulty,
   ]);
 
-  // --------------------------------------------------
   // GET PAINTINGS THAT SHOULD APPEAR ON MAP
-  // --------------------------------------------------
-
+  // Create final list of painting pins that should be visible, result depends on both the hike filters and the search query
   const filteredPaintings = useMemo(() => {
     const query =
       search.trim().toLowerCase();
@@ -258,9 +264,7 @@ export default function MapPage() {
       const paintings =
         hike.paintings ?? [];
 
-      // No search:
-      // show every painting belonging to
-      // hikes that passed the filters.
+      // If there is no search query, show every painting belonging to hikes that passed the active filters
       if (!query) {
         return paintings;
       }
@@ -273,14 +277,12 @@ export default function MapPage() {
           ?.toLowerCase()
           .includes(query);
 
-      // Search matched hike/location:
-      // show all paintings belonging to it.
+      // If the search matches the hike or location, show every painting connected to that hike
       if (hikeMatchesSearch) {
         return paintings;
       }
 
-      // Otherwise only show the exact
-      // paintings/artists that match.
+      // Otherwise only show the exact paintings/artists that match
       return paintings.filter(
         (painting) => {
           const matchesTitle =
@@ -302,16 +304,17 @@ export default function MapPage() {
     });
   }, [filteredHikes, search]);
 
-  // --------------------------------------------------
   // CREATE MAP
-  // --------------------------------------------------
 
   useEffect(() => {
+    // Do not create the map until the container exists in the DOM
     if (!mapContainer.current) return;
 
+    // Use a slightly different center on mobile, so Denmark is positioned better on smaller screens
     const isMobile =
       window.innerWidth < 768;
 
+    // Create a new MapLibre map instance
     const map = new MapLibreMap({
       container: mapContainer.current,
 
@@ -325,8 +328,10 @@ export default function MapPage() {
       zoom: 7,
     });
 
+    // Save the map instance for later access and cleanup
     mapRef.current = map;
 
+    // Store custom HTML markers by painting ID to show/hide them when clustering changes
     const markers = new Map<
       string | number,
       {
@@ -337,35 +342,33 @@ export default function MapPage() {
 
     map.on("load", () => {
 
-      // Custom country colours
-map.setPaintProperty(
-  "countries-fill",
-  "fill-color",
-  [
-    "match",
-    ["get", "ADM0_A3"],
+      // Change the default map colours so Denmark uses the app's green brand colour
+      map.setPaintProperty(
+        "countries-fill",
+        "fill-color",
+        [
+          "match",
+          ["get", "ADM0_A3"],
 
-    "DNK",
-    "#B3AB2C",
+          "DNK",
+          "#B3AB2C",
 
-    "#D9D9D9",
-  ]
-);
+          "#D9D9D9",
+        ]
+      );
 
-map.setPaintProperty(
-  "countries-fill",
-  "fill-opacity",
-  [
-    "case",
-    ["==", ["get", "ADM0_A3"], "DNK"],
-    0.63,
-    1
-  ]
-);
-      // ----------------------------------------------
-      // CREATE GEOJSON FROM FILTERED PAINTINGS
-      // ----------------------------------------------
+      map.setPaintProperty(
+        "countries-fill",
+        "fill-opacity",
+        [
+          "case",
+          ["==", ["get", "ADM0_A3"], "DNK"],
+          0.63,
+          1
+        ]
+      );
 
+      // Convert the filtered paintings into GeoJSON points, because MapLibre requires GeoJSON data for clustering
       const paintingGeoJSON = {
         type: "FeatureCollection" as const,
 
@@ -393,10 +396,7 @@ map.setPaintProperty(
           })),
       };
 
-      // ----------------------------------------------
-      // CLUSTER SOURCE
-      // ----------------------------------------------
-
+      // Add the painting points as a clustered GeoJSON source, nearby paintings are grouped together while zoomed out
       map.addSource("paintings", {
         type: "geojson",
         data: paintingGeoJSON,
@@ -406,10 +406,7 @@ map.setPaintProperty(
         clusterRadius: 60,
       });
 
-      // ----------------------------------------------
-      // CLUSTER PIN IMAGE
-      // ----------------------------------------------
-
+      // Load the custom cluster-pin graphic before creating the cluster layers
       const clusterPinImage =
         new Image();
 
@@ -503,9 +500,7 @@ map.setPaintProperty(
         },
       });
 
-      // ----------------------------------------------
-      // CUSTOM PAINTING MARKERS
-      // ----------------------------------------------
+      // Create one custom image marker for every filtered painting
 
       filteredPaintings.forEach(
         (painting) => {
@@ -540,15 +535,18 @@ map.setPaintProperty(
           markerElement.style.transition =
             "filter 0.15s ease";
 
+          // Custom markers start hidden, updateMarkers() later decides whether each marker should be visible or hidden inside a cluster
           markerElement.style.display =
             "none";
 
+          // Orange outline used when a painting pin is hovered or pressed
           const activeFilter =
             "drop-shadow(2px 0 0 #D14C18) " +
             "drop-shadow(-2px 0 0 #D14C18) " +
             "drop-shadow(0 2px 0 #D14C18) " +
             "drop-shadow(0 -2px 0 #D14C18)";
 
+          // Save the clicked painting so its hike card can open
           markerElement.addEventListener(
             "mouseenter",
             () => {
@@ -615,11 +613,11 @@ map.setPaintProperty(
         }
       );
 
-      // ----------------------------------------------
-      // SHOW ONLY NON-CLUSTERED CUSTOM PINS
-      // ----------------------------------------------
-
+      // Show only custom markers that are not clustered
+      // MapLibre handles clustering using the invisible GeoJSON layer, while the visible painting pins are separate HTML markers.
+      // This function keeps both systems synchronized.
       function updateMarkers() {
+        // Get painting points that are currently not inside a cluster.
         const visibleFeatures =
           map.querySourceFeatures(
             "paintings",
@@ -634,6 +632,7 @@ map.setPaintProperty(
             }
           );
 
+        // Store the IDs of paintings that should currently be visible
         const visibleIds =
           new Set(
             visibleFeatures.map(
@@ -645,6 +644,7 @@ map.setPaintProperty(
             )
           );
 
+        // Show only markers whose painting is not currently clustered
         markers.forEach(
           ({ element }, id) => {
             if (
@@ -662,15 +662,13 @@ map.setPaintProperty(
         );
       }
 
+      // Recheck marker visibility whenever MapLibre renders the map
       map.on(
         "render",
         updateMarkers
       );
 
-      // ----------------------------------------------
-      // CLICK CLUSTER → ZOOM IN
-      // ----------------------------------------------
-
+      // Clicking a cluster automatically zooms to the level where the paintings inside the cluster begin separating
       map.on(
         "click",
         "clusters",
@@ -758,34 +756,31 @@ map.setPaintProperty(
     });
 
     return () => {
+      // Remove all custom HTML markers when the map is recreated or when the user leaves the page
       markers.forEach(
         ({ marker }) => {
           marker.remove();
         }
       );
 
+      // Destroy the MapLibre instance to prevent memory leaks
       map.remove();
 
       mapRef.current = null;
     };
   }, [filteredPaintings]);
 
-  // --------------------------------------------------
   // PAGE
-  // --------------------------------------------------
-
   return (
     <main className="flex h-screen flex-col overflow-hidden">
-      {/* Content above map */}
-      <div className="px-6 pt-6">
-        <h1 className="mb-2 text-3xl font-bold">
-          MAP
-        </h1>
+      {/* Page heading */}
+      <Header
+        title="Map"
+        description="Explore the map, select a location, and discover paintings inspired by its landscape."
+      />
 
-        <p className="mb-3.5">
-          Explore the map, select a location, and discover paintings inspired by its landscape.
-        </p>
-
+      {/* Search and filters */}
+      <div className="px-6">
         {error && (
           <p className="mb-3 text-sm text-red-600">
             {error}
@@ -861,12 +856,12 @@ map.setPaintProperty(
           ref={mapContainer}
           className="h-full w-full overflow-hidden"
         />
-        </div>
+      </div>
 
-       {/* Hike card overlay */}
-{selectedPainting && selectedHike && (
-  <div
-    className="
+      {/* Hike card overlay */}
+      {selectedPainting && selectedHike && (
+        <div
+          className="
       absolute
       inset-0
       z-20
@@ -876,26 +871,26 @@ map.setPaintProperty(
       bg-black/20
       p-4
     "
-    onClick={() =>
-      setSelectedPainting(null)
-    }
-  >
-    <div
-      className="w-full max-w-105"
-      onClick={(event) =>
-        event.stopPropagation()
-      }
-    >
-      <HikeCard
-        hike={selectedHike}
-        painting={selectedPainting}
-        onClose={() =>
-          setSelectedPainting(null)
-        }
-      />
-    </div>
-  </div>
-)}
+          onClick={() =>
+            setSelectedPainting(null)
+          }
+        >
+          <div
+            className="w-full max-w-105"
+            onClick={(event) =>
+              event.stopPropagation()
+            }
+          >
+            <HikeCard
+              hike={selectedHike}
+              painting={selectedPainting}
+              onClose={() =>
+                setSelectedPainting(null)
+              }
+            />
+          </div>
+        </div>
+      )}
       <MobileViewSwitch target="cards" />
     </main>
   );

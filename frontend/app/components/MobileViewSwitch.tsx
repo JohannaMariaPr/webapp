@@ -17,7 +17,6 @@ export default function MobileViewSwitch({
         fixed
         bottom-7
         left-1/2
-        z-30
         flex
         -translate-x-1/2
         items-center

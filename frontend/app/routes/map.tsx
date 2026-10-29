@@ -57,12 +57,11 @@ interface Hike {
   title?: string;
   location?: string;
   description_short?: string;
-
   distance_km?: number;
   duration_min?: number;
   duration_max?: number;
   difficulty?: string;
-
+  route_picture?: string;
   paintings?: Painting[];
   Reviews?: Review[];
 

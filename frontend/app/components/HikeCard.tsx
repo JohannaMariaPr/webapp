@@ -2,8 +2,11 @@ import { Link } from "react-router";
 import {
   Image as ImageIcon,
   MapPin,
-  Paintbrush,
+  Paintbrush
 } from "lucide-react";
+
+import useSavedHike from "~/hooks/useSavedHike";
+import { BookmarkIcon } from "./hikedescription";
 
 interface Review {
   "Star rating": string;
@@ -25,6 +28,7 @@ interface Hike {
   duration_min?: number;
   duration_max?: number;
   difficulty?: string;
+  route_picture?: string;
   Reviews?: Review[];
 }
 
@@ -32,12 +36,13 @@ interface HikeCardProps {
   hike: Hike;
   painting: Painting;
   onClose?: () => void;
+  onUnsave?: (hikeId: string | number) => void;
 }
 
 export default function HikeCard({
   hike,
   painting,
-  onClose,
+  onClose, onUnsave
 }: HikeCardProps) {
   // ----------------------------------------
   // RATING
@@ -109,6 +114,22 @@ export default function HikeCard({
 
   const duration = formatDuration();
 
+  const {
+  isSaved,
+  isLoading,
+  toggleSaved,
+} = useSavedHike(hike.id);
+
+async function handleToggleSaved() {
+  const wasSaved = isSaved;
+
+  await toggleSaved();
+
+  if (wasSaved && onUnsave) {
+    onUnsave(hike.id);
+  }
+}
+
   return (
     <article
       className="
@@ -150,7 +171,23 @@ export default function HikeCard({
           ×
         </button>
       )}
-
+{/* Save button */}
+      <button
+  type="button"
+  onClick={handleToggleSaved}
+  disabled={isLoading}
+  aria-label={isSaved ? "Remove saved hike" : "Save hike"}
+  className="
+    absolute
+    left-4
+    top-4
+    transition
+    hover:scale-105
+    disabled:opacity-50
+  "
+>
+  <BookmarkIcon filled={isSaved} />
+</button>
       {/* Top images */}
       <div className="grid grid-cols-2">
         {/* Painting image */}
@@ -168,18 +205,20 @@ export default function HikeCard({
           )}
         </div>
 
-        {/* Temporary map / route placeholder */}
-        <div
-          className="
-            flex
-            aspect-square
-            items-center
-            justify-center
-            bg-[#DCE8D7]
-          "
-        >
-          <MapPin size={30} />
-        </div>
+        {/* Route image */}
+<div className="aspect-square overflow-hidden bg-[#E8E2DC]">
+  {hike.route_picture ? (
+    <img
+      src={hike.route_picture}
+      alt={`${hike.title} route`}
+      className="h-full w-full object-cover"
+    />
+  ) : (
+    <div className="flex h-full items-center justify-center">
+      <MapPin size={30} />
+    </div>
+  )}
+</div>
       </div>
 
       {/* Content */}

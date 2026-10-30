@@ -26,10 +26,12 @@ export default function NotFound() {
           <p className="not-found-description">
             Let&apos;s get you back to exploring nature and discovering art.
           </p>
+          {/* Use the router link to return home without a full page reload. */}
           <Link className="not-found-home-link" to="/">
             Back to home
           </Link>
         </div>
+        {/* Decorative illustration; the page text already communicates the error. */}
         <img
           className="not-found-landscape"
           src={landscape}

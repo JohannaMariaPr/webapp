@@ -1,8 +1,11 @@
+// Props received from the parent component.
+// value is the currently selected duration, onChange updates the selected value
 interface DurationFilterProps {
   value: string | null;
   onChange: (value: string | null) => void;
 }
 
+// Available duration options shown as filter buttons
 const durationOptions = [
   { label: "< 1 h", value: "under-1" },
   { label: "1-2 h", value: "1-2" },
@@ -17,16 +20,20 @@ export default function DurationFilter({
 }: DurationFilterProps) {
   return (
     <div className="flex flex-wrap gap-3">
+      {/* Create one button for each duration option. */}
       {durationOptions.map((option) => {
+        // Check if this option is currently selected
         const isSelected = value === option.value;
 
         return (
           <button
             key={option.value}
             type="button"
+            // Select the option, or remove it if it is already selected
             onClick={() =>
               onChange(isSelected ? null : option.value)
             }
+            // Change the button style when the option is selected
             className={`
               rounded-full
               border

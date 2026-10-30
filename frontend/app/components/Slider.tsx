@@ -6,10 +6,12 @@ interface SliderProps {
 }
 
 export default function Slider({ beforeImage, afterImage }: SliderProps) {
+	// Store where the image divider is, from 0% to 100%.
 	const [position, setPosition] = useState(50);
 	const sliderRef = useRef<HTMLDivElement>(null);
 
 	function updatePosition(event: { clientX: number }) {
+		// Find the pointer position inside the slider.
 		const slider = sliderRef.current;
 
 		if (!slider) {
@@ -37,6 +39,7 @@ export default function Slider({ beforeImage, afterImage }: SliderProps) {
 }}
 			
 		>
+			{/* Show the first image as the background image. */}
 			<img
 				src={beforeImage}
 				alt="Before"
@@ -44,6 +47,7 @@ export default function Slider({ beforeImage, afterImage }: SliderProps) {
 				draggable="false"
 			/>
 
+			{/* Show part of the second image based on the divider position. */}
 			<div
 				className="absolute inset-y-0 left-0 overflow-hidden"
 				style={{ width: `${position}%` }}
@@ -57,6 +61,7 @@ export default function Slider({ beforeImage, afterImage }: SliderProps) {
 				/>
 			</div>
 
+			{/* Let the user drag the divider to compare both images. */}
 			<button
 				type="button"
 				aria-label="Drag to compare images"

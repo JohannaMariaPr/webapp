@@ -6,6 +6,7 @@ import menuFooter from "../../images/menufooter.png";
 type IconName = "home" | "explore" | "map" | "saved" | "account";
 
 const navigation = [
+  // `end` prevents the home item from staying active on every nested route.
   { label: "Home", to: "/", icon: "home" as IconName, end: true },
   { label: "Explore", to: "/allhikes", icon: "explore" as IconName },
   { label: "Map", to: "/map", icon: "map" as IconName },
@@ -85,6 +86,8 @@ export default function Sidebar() {
       </button>
 
       {isOpen && (
+        // The backdrop provides an accessible click target for dismissing the
+        // drawer without requiring the user to find the close button.
         <button
           className="sidebar-backdrop"
           type="button"
@@ -111,6 +114,7 @@ export default function Sidebar() {
 
         <nav className="sidebar-nav" aria-label="Main navigation">
           {navigation.map((item) => (
+            // Selecting a destination should also dismiss the mobile drawer.
             <NavLink
               key={item.label}
               to={item.to}
@@ -126,6 +130,7 @@ export default function Sidebar() {
           ))}
         </nav>
 
+        {/* Decorative artwork; the navigation labels provide the accessible content. */}
         <img
           className="sidebar-footer"
           src={menuFooter}

@@ -17,7 +17,7 @@ export default function Header({
 
   return (
     <header className={`bg-background px-6 pb-4 pt-5 text-ink ${className}`}>
-      {/* padding leaves room for the menu button */}
+      {/* right padding leaves room for the menu button  */}
       <div className="mb-3 flex items-center justify-between pr-12 min-[761px]:pr-0">
         <button
           type="button"

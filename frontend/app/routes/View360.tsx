@@ -2,11 +2,13 @@ import { useState } from "react";
 import { Link, useSearchParams } from "react-router";
 import { ReactPhotoSphereViewer } from "react-photo-sphere-viewer";
 
+// Image shown in the 360 viewer generated the image for the specified hike.
 const panoramas = [
   "/360panoramas/Monsklint.png",
 ];
 
 function Icon360() {
+  // Show the 360 circle that dissapears in the middle of the screen.
   return (
     <svg width="110" height="90" viewBox="0 0 110 90" fill="none" stroke="#5a2e1f" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <text x="55" y="38" textAnchor="middle" fontSize="40" fontFamily="Montserrat, sans-serif" fontWeight="300" fill="#5a2e1f" stroke="none">360</text>
@@ -17,6 +19,7 @@ function Icon360() {
 }
 
 function ArrowIcon({ direction }: { direction: "left" | "right" }) {
+  // Show an arrow for changing the panorama.
   return (
     <svg width="36" height="30" viewBox="0 0 36 30" fill="white" aria-hidden="true">
       {direction === "left" ? (
@@ -29,6 +32,7 @@ function ArrowIcon({ direction }: { direction: "left" | "right" }) {
 }
 
 function RotatePhoneIcon() {
+  // Show the flip your phone button.
   return (
     <svg width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <rect x="6" y="4" width="14" height="24" rx="2" />
@@ -39,12 +43,13 @@ function RotatePhoneIcon() {
 }
 
 export default function View360() {
-  // All hooks live INSIDE the component
+  // Keep track of the circle, current image, and hike ID.
   const [showHint, setShowHint] = useState(true);
   const [index, setIndex] = useState(0);
   const [searchParams] = useSearchParams();
-  const hikeId = searchParams.get("hike"); // comes from /View360?hike=4
+  const hikeId = searchParams.get("hike");
 
+  
   const prev = () => setIndex((i) => (i - 1 + panoramas.length) % panoramas.length);
   const next = () => setIndex((i) => (i + 1) % panoramas.length);
 
@@ -61,7 +66,7 @@ export default function View360() {
         navbar={false}
       />
 
-      {/* 360 circle disappears when you start moving/ dragging */}
+      {/* Hide the 360 circle after the user starts moving the image. */}
       {showHint && (
         <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
           <div className="flex h-52 w-52 items-center justify-center rounded-full bg-[#f3eee8]">
@@ -70,7 +75,7 @@ export default function View360() {
         </div>
       )}
 
-      {/* back button */}
+      {/* Show the arrows at the bottom of the screen. */}
       <div className="absolute inset-x-0 bottom-6 z-10 flex flex-col items-center gap-3 px-4">
         <div className="flex w-full items-center justify-between">
           <button onClick={prev} aria-label="Previous panorama" className="p-2">
@@ -88,7 +93,7 @@ export default function View360() {
           </button>
         </div>
 
-        {/* Back to the active hike it was opened from (or All Hikes if opened directly) */}
+        {/* Back to the active hike it was opened from */}
         <Link
           to={hikeId ? `/activehike/${hikeId}` : "/allhikes"}
           className="rounded-full bg-[#f3eee8] px-5 py-2 text-sm font-bold uppercase text-[#6b3f2e] shadow-md"

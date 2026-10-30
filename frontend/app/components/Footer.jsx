@@ -116,7 +116,7 @@ export default function Footer() {
           ))}
         </ul>
         <p className="mt-1 text-details text-mist">
-          © {new Date().getFullYear()} LYSTTi · Privacy Policy · Terms &amp; Conditions · Cookies
+          © {new Date().getFullYear()} LYSSTi · Privacy Policy · Terms &amp; Conditions · Cookies
         </p>
       </div>
     </footer>

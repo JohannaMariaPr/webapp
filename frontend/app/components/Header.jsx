@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router";
 import SearchBar from "./SearchBar";
 
-// header title + description + search bar
+// header used at the top of allhikes, saved, hike detail and active hike.
 
 export default function Header({
   title,
@@ -17,7 +17,7 @@ export default function Header({
 
   return (
     <header className={`bg-background px-6 pb-4 pt-5 text-ink ${className}`}>
-      {/* back button + profile */}
+      {/* padding leaves room for the menu button */}
       <div className="mb-3 flex items-center justify-between pr-12 min-[761px]:pr-0">
         <button
           type="button"
@@ -47,8 +47,8 @@ export default function Header({
       <h1 className="text-[clamp(1.75rem,8vw,2.8125rem)] font-bold uppercase leading-tight">
         {title}
       </h1>
-      {/* more than 2 lines of text are cut with "..." */}
-      <p className="mt-1 line-clamp-2 max-w-md text-[clamp(1rem,3.8vw,1.3125rem)] leading-snug">
+      {/* line-clamp-2: more than 2 lines of text are cut with "..." */}
+      <p className="mt-1 line-clamp-2 max-w-md text-[clamp(1rem,3.8vw,1.3125rem)] leading-snug min-[761px]:max-w-none">
         {description}
       </p>
 

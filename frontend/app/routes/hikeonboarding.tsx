@@ -8,6 +8,8 @@ import onboarding3 from "../../images/onboarding3.png";
 
 function getQueryParam(search: string, key: string, fallback: string) {
   const params = new URLSearchParams(search);
+  // The onboarding page can also be opened directly, so keep the summary usable
+  // when a navigation link does not provide every hike detail.
   return params.get(key) ?? fallback;
 }
 
@@ -35,6 +37,8 @@ export default function HikeOnboarding() {
       const isDesktop = window.innerWidth > 768;
       setShowDesktopGate(isDesktop);
 
+      // Onboarding is designed for a phone; desktop users continue through the
+      // send-to-device flow instead of briefly seeing the mobile layout.
       if (isDesktop) {
         navigate("/sendtodevice", { replace: true });
       }
@@ -51,6 +55,7 @@ export default function HikeOnboarding() {
   }
 
   const goToStep = (nextStep: number) => {
+    // Keep button and swipe navigation inside the three-step onboarding flow.
     setStep(Math.max(0, Math.min(2, nextStep)));
   };
 
@@ -64,6 +69,8 @@ export default function HikeOnboarding() {
     }
 
     const distance = (event.changedTouches[0]?.clientX ?? touchStart) - touchStart;
+    // Ignore short movements so ordinary taps/scroll gestures do not change
+    // slides; the direction is based on the horizontal movement.
     if (Math.abs(distance) >= 50) {
       goToStep(step + (distance < 0 ? 1 : -1));
     }

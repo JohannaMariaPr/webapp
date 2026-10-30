@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Link } from "react-router";
 
 export type HikeDescriptionData = {
@@ -13,6 +12,14 @@ export type HikeDescriptionData = {
   description: string;
 };
 
+type HikeDescriptionProps = {
+  hike: HikeDescriptionData;
+  isSaved: boolean;
+  isSaving: boolean;
+  onToggleSaved: () => void;
+};
+
+// Show the hike rating as stars.
 function Stars({ rating }: { rating: number }) {
   return (
     <span aria-label={`${rating} out of 5 stars`} style={{ color: "#FFC100", fontSize: "2rem" }}>
@@ -21,19 +28,21 @@ function Stars({ rating }: { rating: number }) {
   );
 }
 
+// Make text between ** marks bold.
 function renderDescription(text: string) {
   return text.split("**").map((part, i) =>
     i % 2 === 1 ? <strong key={i}>{part}</strong> : part
   );
 }
 
-function BookmarkIcon({ filled }: { filled: boolean }) {
+// Show the bookmark icon for saving a hike.
+export function BookmarkIcon({ filled }: { filled: boolean }) {
   return (
     <svg
       width="36"
       height="39"
       viewBox="0 0 24 26"
-      fill={filled ? "#F4D78B" : "none"}
+      fill={filled ? "#F4D78B" : "#F6EFE9"}
       stroke="#673C33"
       strokeWidth="2"
       strokeLinejoin="round"
@@ -45,23 +54,12 @@ function BookmarkIcon({ filled }: { filled: boolean }) {
   );
 }
 
-export default function HikeDescription({ hike }: { hike: HikeDescriptionData }) {
-  const [saved, setSaved] = useState(() => {
-    if (typeof window === "undefined") return false;
-    const savedHikes = JSON.parse(localStorage.getItem("savedHikes") || "[]") as Array<string | number>;
-    return savedHikes.some((id) => String(id) === String(hike.id));
-  });
-
-  function toggleSaved() {
-    const savedHikes = JSON.parse(localStorage.getItem("savedHikes") || "[]") as Array<string | number>;
-    const nextSaved = saved
-      ? savedHikes.filter((id) => String(id) !== String(hike.id))
-      : [...savedHikes, hike.id];
-
-    localStorage.setItem("savedHikes", JSON.stringify(nextSaved));
-    setSaved(!saved);
-  }
-
+export default function HikeDescription({
+  hike,
+  isSaved,
+  isSaving,
+  onToggleSaved,
+}: HikeDescriptionProps) {
   return (
     <section style={{ background: "#f3eee8", color: "#673C33", padding: "1.5rem" }}>
       <header style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
@@ -75,23 +73,28 @@ export default function HikeDescription({ hike }: { hike: HikeDescriptionData })
           {hike.name}
         </h1>
        <button
-  onClick={toggleSaved}
-  aria-pressed={saved}
-  aria-label={saved ? "Remove hike from saved hikes" : "Save this hike"}
+  type="button"
+  onClick={onToggleSaved}
+  disabled={isSaving}
+  aria-label={
+    isSaved ? "Remove saved hike" : "Save hike"
+  }
   style={{
     background: "none",
     border: "none",
-    color: saved ? "#F4D78B" : "#673C33",
+    color: isSaved ? "#F4D78B" : "#673C33",
     cursor: "pointer",
     padding: 0,
   }}
 >
-  <BookmarkIcon filled={saved} />
+  <BookmarkIcon filled={isSaved} />
 </button>
       </header>
 
+      {/* Show the distance, time, and difficulty. */}
       <p>{hike.distanceKm} km • {hike.duration} • {hike.difficulty}</p>
 
+      {/* Show the rating and link to leave a review.the same review form that you can fill out when you get to the bottom where the reviews are. */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <Stars rating={hike.rating} />
         <Link
@@ -102,6 +105,7 @@ export default function HikeDescription({ hike }: { hike: HikeDescriptionData })
         </Link>
       </div>
 
+      {/* Show the short headline and full description. */}
       <h2 style={{ fontWeight: "bold", marginBottom: "1rem" }}>{hike.headline}</h2>
       <p style={{ marginTop: 0 }}>{renderDescription(hike.description)}</p>
     </section>

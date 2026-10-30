@@ -1,15 +1,27 @@
 import { useRef } from "react";
 import { Link } from "react-router";
 
+type HomeCard = {
+  id: string | number;
+  title: string;
+  subtitle?: string;
+  image: string;
+};
+
+type HomeCardSliderProps = {
+  cards?: HomeCard[];
+  hrefFor?: (card: HomeCard) => string;
+};
+
 const GAP_PX = 20; // = gap-5
 
 // cards:   [{ id, title, subtitle, image }]
 // hrefFor: (card) => the page a card opens
-export default function HomeCardSlider({ cards = [], hrefFor }) {
-  const trackRef = useRef(null);
+export default function HomeCardSlider({ cards = [], hrefFor }: HomeCardSliderProps) {
+  const trackRef = useRef<HTMLDivElement>(null);
 
   // Arrow buttons (for mouse users): scroll by one card
-  function scrollByCard(direction) {
+  function scrollByCard(direction: number) {
     const track = trackRef.current;
     if (!track) return;
 
@@ -24,8 +36,7 @@ export default function HomeCardSlider({ cards = [], hrefFor }) {
   if (cards.length === 0) return null;
 
   return (
-    // The light olive is the map colour from the design. Put the map pattern in as a
-    // background image here if you have one.
+    // bg color instead of map, less busy looking
     <section aria-label="Hikes" className="relative bg-[#dcd9a9] py-10">
       <div
         ref={trackRef}
@@ -61,7 +72,7 @@ export default function HomeCardSlider({ cards = [], hrefFor }) {
         ))}
       </div>
 
-      {/* Arrows only on web: on a phone you just swipe */}
+      {/* arrows only on web: on a phone you just swipe */}
       {cards.length > 1 && (
         <>
           <button

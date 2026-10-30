@@ -1,5 +1,9 @@
 import { X } from "lucide-react";
 
+// This component does not store the filter state by itself, the current filter values are created in the page that uses this component
+// A value of null means that no filter is currently active
+// When the user clicks the X on one of the active filter tags, the component calls the matching setter function with null
+// and that updates the state in the parent page and removes the filter.
 interface ActiveFilterTagsProps {
   distance: string | null;
   setDistance: (value: string | null) => void;
@@ -11,6 +15,7 @@ interface ActiveFilterTagsProps {
   setDifficulty: (value: string | null) => void;
 }
 
+// Converts the internal distance filter value into readable labels shown to the user
 const distanceLabels: Record<string, string> = {
   "under-2": "< 2 km",
   "2-5": "2-5 km",
@@ -19,6 +24,7 @@ const distanceLabels: Record<string, string> = {
   "over-15": "> 15 km",
 };
 
+// Converts the internal duration filter values into readable labels shown to the user
 const durationLabels: Record<string, string> = {
   "under-1": "< 1 h",
   "1-2": "1-2 h",
@@ -27,6 +33,7 @@ const durationLabels: Record<string, string> = {
   "over-4": "> 4 h",
 };
 
+// Converts the internal difficulty values into labels shown in the active filter tag
 const difficultyLabels: Record<string, string> = {
   easy: "Easy",
   medium: "Medium",
@@ -42,10 +49,13 @@ export default function ActiveFilterTags({
   setDifficulty,
 }: ActiveFilterTagsProps) {
   return (
+    // Wrap active filter tags onto a new line if there is not enough space
     <div className="flex flex-wrap gap-2">
+      {/* Active distance filter */}
       {distance && (
         <button
           type="button"
+          // Remove the active distance filter by changing its value back to null.
           onClick={() => setDistance(null)}
           className="
             flex
@@ -64,9 +74,11 @@ export default function ActiveFilterTags({
         </button>
       )}
 
+      {/* Active duration filter */}
       {duration && (
         <button
           type="button"
+          // Remove the active duration filter by changing its value back to null.
           onClick={() => setDuration(null)}
           className="
             flex
@@ -85,10 +97,13 @@ export default function ActiveFilterTags({
         </button>
       )}
 
+      {/* Active difficulty filter */}
       {difficulty && (
         <button
           type="button"
+          // Remove the active difficulty filter by changing its value back to null
           onClick={() => setDifficulty(null)}
+          //The tag colour changes depending on the selected difficulty
           style={{
             backgroundColor:
               difficulty === "easy"

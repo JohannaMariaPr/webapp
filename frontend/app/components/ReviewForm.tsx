@@ -1,14 +1,8 @@
 import { useState } from "react";
 import { Link } from "react-router";
 
-type HikeOption = {
-  id: string | number;
-  title: string;
-};
-
 type ReviewFormProps = {
   hikeId?: string;
-  hikeTitle?: string;
   onSubmitted?: () => void;
 };
 
@@ -25,14 +19,9 @@ const inputClass =
 
 const labelClass = "flex flex-col gap-1 text-details font-medium";
 
-// hikeId (optional): when given, the Hike field is locked to hikeTitle
-// (the title of that hike, loaded by the parent). Without it, the user picks an
-// existing hike from a dropdown, so every review is linked to a real hikes.id.
-export default function ReviewForm({ hikeId, hikeTitle = "", onSubmitted }: ReviewFormProps) {
-  const locked = Boolean(hikeId);
-
-  const [hikes, setHikes] = useState<HikeOption[]>([]); // options for the dropdown
-  const [selectedId, setSelectedId] = useState("");
+// hikeId: the hike this review belongs to (hikes.id). The hike name is not
+// asked for in the form, because the review is linked by id.
+export default function ReviewForm({ hikeId, onSubmitted }: ReviewFormProps) {
   const [reviewTitle, setReviewTitle] = useState("");
   const [rating, setRating] = useState(5);
   const [description, setDescription] = useState("");
@@ -40,8 +29,6 @@ export default function ReviewForm({ hikeId, hikeTitle = "", onSubmitted }: Revi
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-
-  const loadingHike = Boolean(hikeId) && !hikeTitle;
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -116,16 +103,6 @@ export default function ReviewForm({ hikeId, hikeTitle = "", onSubmitted }: Revi
       <h2 className="text-paragraph font-semibold leading-snug">Write a review</h2>
 
       <label className={labelClass}>
-        Hike
-        <input
-          type="text"
-          value={hikeTitle || "Loading..."}
-          readOnly
-          className={inputClass}
-        />
-      </label>
-
-      <label className={labelClass}>
         Title
         <input
           type="text"
@@ -177,7 +154,7 @@ export default function ReviewForm({ hikeId, hikeTitle = "", onSubmitted }: Revi
       <div className="flex flex-wrap items-center justify-center gap-4 lg:justify-start">
         <button
           type="submit"
-          disabled={submitting || loadingHike}
+          disabled={submitting}
           className="rounded-xl bg-ink px-5 py-2 text-details font-medium text-background disabled:opacity-50"
         >
           {submitting ? "Submitting..." : "Submit review"}
